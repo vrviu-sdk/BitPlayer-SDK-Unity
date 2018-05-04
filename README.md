@@ -40,27 +40,27 @@ Unity2017.2.2
 
 ## 导入工程
 ### 1. 开发准备
-下载最新的demo、BitPlayerSDK_*.unitypackage和GoogleVRForUnity_*.unitypackage。  
-如果希望支持Oculus，需要下载OVRForUnity.unitypackage
+下载最新的demo、BitPlayerSDK_\*.unitypackage 和 GoogleVRForUnity_\*.unitypackage。  
+如果希望支持Oculus，需要下载 OVRForUnity.unitypackage
 
-### 2. 导入BitPlayerSDK_*.unitypackage
+### 2. 导入BitPlayerSDK_\*.unitypackage
 
-* 打开Unity并创建一个新的3D项目.
-* 选择Assets > Import Package > Custom Package.
-* 选择BitPlayerSDK_*.unitypackage.
-* 在导入包对话框中选择导入.
+* 打开Unity并创建一个新的3D项目
+* 选择Assets > Import Package > Custom Package
+* 选择BitPlayerSDK_\*.unitypackage
+* 在导入包对话框中选择导入
 
-### 3. 导入GoogleVRForUnity_*.unitypacage
+### 3. 导入GoogleVRForUnity_\*.unitypacage
 
-* 选择Assets > Import Package > Custom Package.
-* 选择GoogleVRForUnity_*.unitypackage.
-* 在导入包对话框中选择导入.
+* 选择Assets > Import Package > Custom Package
+* 选择GoogleVRForUnity_\*.unitypackage
+* 在导入包对话框中选择导入
 
 ### 4. 配置构建设置和player settings
 
-* 选择File > Build Settings.
+* 选择File > Build Settings
 * 选择相应平台，例如选中Android或者iOS并点击Switch Platform
-* 在Build Setting中点击Player Settings.
+* 在Build Setting中点击Player Settings
 
   配置Player settings如下：
 
