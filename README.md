@@ -129,7 +129,7 @@ player.GetPlayState();
 player.Release();
 ```
 
-### 6. 检查混淆
+### 7. 检查混淆
 ```proguard
 -keep class com.viu.player.** { *; } 
 ```
