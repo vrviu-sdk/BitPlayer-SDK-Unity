@@ -40,7 +40,7 @@ Unity2017.2.2
 
 ## 导入工程
 ### 1. 开发准备
-下载最新的demo、BitPlayerSDK_*.unitypackage和GoogleVRForUnity_*.unitypackage。
+下载最新的demo、BitPlayerSDK_*.unitypackage和GoogleVRForUnity_*.unitypackage。  
 如果希望支持Oculus，需要下载OVRForUnity.unitypackage
 
 ### 2. 导入BitPlayerSDK_*.unitypackage
@@ -64,15 +64,11 @@ Unity2017.2.2
 
   配置Player settings如下：
 
-  Player Settings > XR Settings > Virtual Reality Support	Enabled
-
-  Player Settings > XR Settings > SDKs     点击添加Daydream和Cardboard或者Oculus
-
-  Player Settings > XR Setting > Minimum API Level 
-
-  DayDream:Android7.0‘Nougat’(API level 24)或者更高
-
-  Cardboard:Android4.4’Kit Kat’(API level 19)或者更高
+    Player Settings > XR Settings > Virtual Reality Support	Enabled  
+    Player Settings > XR Settings > SDKs，点击添加Daydream和Cardboard或者Oculus  
+    Player Settings > XR Setting > Minimum API Level  
+    DayDream: Android7.0‘Nougat’(API level 24)或者更高  
+    Cardboard: Android4.4’Kit Kat’(API level 19)或者更高
 
 ### 5. 预览demo scene
 
