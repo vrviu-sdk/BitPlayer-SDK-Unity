@@ -1,4 +1,4 @@
-# VRVIU-BitPlayer-Demo-Unity
+# BitPlayer-SDK-Unity
 
 [![](https://img.shields.io/badge/Powered%20by-vrviu.com-brightgreen.svg)](https://vrviu.com)
 
