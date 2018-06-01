@@ -140,7 +140,6 @@ player.Release();
  |BizId|分配给用户的ID，可通过 www.vrviu.com 填写表单或者联系客服申请|必填|String|
  |AccessKey|分配给用户的ID，可通过 www.vrviu.com 填写表单或者联系客服申请|必填|String
 
-## 商务合作
-电话：0755-86960615
-
-邮箱：business@vrviu.com
+## 联系我们
+如果有技术问题咨询，请加入官方QQ群：136562408
+商务合作请电话：0755-86960615，或者邮箱：business@vrviu.com
