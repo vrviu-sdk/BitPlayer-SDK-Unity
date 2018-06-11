@@ -987,11 +987,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1969892067684298, guid: 4681ef26a9a8bd849974448c054fbc34, type: 2}
       propertyPath: m_Layer
-      value: 8
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 1573943283350138, guid: 4681ef26a9a8bd849974448c054fbc34, type: 2}
       propertyPath: m_Layer
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 114873123720726776, guid: 4681ef26a9a8bd849974448c054fbc34,
         type: 2}
@@ -1025,19 +1025,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1397201843771536, guid: 4681ef26a9a8bd849974448c054fbc34, type: 2}
       propertyPath: m_Layer
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1216089858297906, guid: 4681ef26a9a8bd849974448c054fbc34, type: 2}
       propertyPath: m_Layer
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1112434861815370, guid: 4681ef26a9a8bd849974448c054fbc34, type: 2}
       propertyPath: m_Layer
-      value: 8
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 1130677536874508, guid: 4681ef26a9a8bd849974448c054fbc34, type: 2}
       propertyPath: m_Layer
-      value: 8
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 114873123720726776, guid: 4681ef26a9a8bd849974448c054fbc34,
         type: 2}
@@ -2657,7 +2657,6 @@ MonoBehaviour:
   playButton: {fileID: 1420700635}
   vrButton: {fileID: 1126298101}
   exitVRButton: {fileID: 1885021104}
-  loadingImage: {fileID: 0}
   seekBarAdjuster: {fileID: 1484303226}
   player: {fileID: 127065083}
   fsOperationCanvas: {fileID: 1762718352}

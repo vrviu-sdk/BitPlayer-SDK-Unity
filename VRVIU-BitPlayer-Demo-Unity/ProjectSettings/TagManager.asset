@@ -3,7 +3,14 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - video 6
+  - video 3
+  - video 4
+  - Exit
+  - video 1
+  - video 2
+  - video 5
   layers:
   - Default
   - TransparentFX
@@ -13,9 +20,9 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
-  - 
+  - LeftEye
+  - RightEye
+  - Both
   - 
   - 
   - 
