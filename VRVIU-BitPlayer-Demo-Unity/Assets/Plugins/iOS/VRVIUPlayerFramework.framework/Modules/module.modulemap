@@ -1,0 +1,6 @@
+framework module VRVIUPlayerFramework {
+  umbrella header "VRVIUPlayerFramework.h"
+
+  export *
+  module * { export * }
+}

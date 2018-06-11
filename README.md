@@ -1,9 +1,11 @@
+# vrviu-bitplayer-demo-unity
+=======
 # BitPlayer-SDK-Unity
 
 [![](https://img.shields.io/badge/Powered%20by-vrviu.com-brightgreen.svg)](https://vrviu.com)
 
 ## 版本
-V1.1
+V1.2
 
 ## 功能说明
 支持VR点播以及VR直播功能。VR点播是播放云端或者本地的文件；VR直播可以是网络主播实时推送的视频流，用户使用此播放器能够看到主播直播的画面。
@@ -68,67 +70,72 @@ Unity2017.2.2
     Player Settings > XR Setting > Minimum API Level  
     DayDream: Android7.0‘Nougat’(API level 24)或者更高  
     Cardboard: Android4.4’Kit Kat’(API level 19)或者更高
-
-### 5. 预览demo scene
+### 5. 添加图层
+* 在播放场景中，增加图层RightEye和LeftEye
+* 选中VideoManager->RightEye 设置Layer为RightEye
+* 选中VideoManager->LeftEye 设置Layer为LeftEye
+* 选中VideoManager->RightSide 设置Layer为RightEye
+* 选中VideoManager->LeftSide 设置Layer为LeftEye
+### 6. 预览demo scene
 
 * 在Unity项目窗口，进入Assets > VRVIUBitVR > Demos > Scenes。打开Lobby场景
 * 点击Play按钮。在Game窗口中可以看到Lobby
 * 同时按下Alt键和鼠标左键，可以选择需要播放的视频类型
 * 等待凝视点变红后会跳转到播放页面
 
-### 6. 接口调用
+### 7. 接口调用
 
-##### 6.1 初始化
+##### 7.1 初始化
 ```c#
 player.SetupPlayer(VideoData data, Account account);
 ```
 
-##### 6.2 暂停点播播放
+##### 7.2 暂停点播播放
 ```c#
 player.Pause();
 ```
 
-##### 6.3点播播放时长
+##### 7.3点播播放时长
 ```c#
 player.GetDuration();
 ```
 
-##### 6.4点播播放进度
+##### 7.4点播播放进度
 ```c#
 player.GetPlayPosition ();
 ```
 
-##### 6.5点播跳转
+##### 7.5点播跳转
 ```c#
 player.SeekTo(int msec);
 ```
 
-##### 6.6设置音量
+##### 7.6设置音量
 ```c#
 player.SetVolume (float volume);
 ```
 
-##### 6.7设置点播播放速度
+##### 7.7设置点播播放速度
 ```c#
 player.SetSpeed(float speed);
 ```
 
-##### 6.8获取点播播放速度
+##### 7.8获取点播播放速度
 ```c#
 player.GetSpeed();
 ```
 
-##### 6.9获取播放状态
+##### 7.9获取播放状态
 ```c#
 player.GetPlayState();
 ```
 
-##### 6.10结束点播（直播）播放
+##### 7.10结束点播（直播）播放
 ```c#
 player.Release();
 ```
 
-### 7. 检查混淆
+### 8. 检查混淆
 ```proguard
 -keep class com.viu.player.** { *; } 
 ```

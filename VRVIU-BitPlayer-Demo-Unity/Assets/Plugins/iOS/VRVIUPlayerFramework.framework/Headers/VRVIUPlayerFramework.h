@@ -1,0 +1,50 @@
+/*
+ * VRVIUPlayerFramework.h
+ *
+ * Copyright (c) 2018 VRVIU
+ * Copyright (c) 2018 Felix
+ *
+ * This file is part of VRVIUPlayer.
+ *
+ */
+
+#import <UIKit/UIKit.h>
+
+//! Project version number for VRVIUPlayerFramework.
+FOUNDATION_EXPORT double VRVIUPlayerFrameworkVersionNumber;
+
+//! Project version string for VRVIUPlayerFramework.
+FOUNDATION_EXPORT const unsigned char VRVIUPlayerFrameworkVersionString[];
+
+// In this header, you should import all the public headers of your framework using statements like #import <VRVIUPlayerFrameworkWithSSL/PublicHeader.h>
+#import <VRVIUPlayerFramework/VRVIUMediaPlayback.h>
+#import <VRVIUPlayerFramework/VRVIUMPMoviePlayerController.h>
+#import <VRVIUPlayerFramework/VRVIUOptions.h>
+#import <VRVIUPlayerFramework/VRVIUMoviePlayerController.h>
+#import <VRVIUPlayerFramework/VRVIUAVMoviePlayerController.h>
+#import <VRVIUPlayerFramework/VRVIUMediaModule.h>
+#import <VRVIUPlayerFramework/VRVIUMediaPlayer.h>
+#import <VRVIUPlayerFramework/VRVIUNotificationManager.h>
+#import <VRVIUPlayerFramework/VRVIUKVOController.h>
+#import <VRVIUPlayerFramework/VRVIUSDLGLViewProtocol.h>
+
+// backward compatible for old names
+#define VRVIUMediaPlaybackIsPreparedToPlayDidChangeNotification VRVIUMPMediaPlaybackIsPreparedToPlayDidChangeNotification
+#define VRVIUMoviePlayerLoadStateDidChangeNotification VRVIUMPMoviePlayerLoadStateDidChangeNotification
+#define VRVIUMoviePlayerPlaybackDidFinishNotification VRVIUMPMoviePlayerPlaybackDidFinishNotification
+#define VRVIUMoviePlayerPlaybackDidFinishReasonUserInfoKey VRVIUMPMoviePlayerPlaybackDidFinishReasonUserInfoKey
+#define VRVIUMoviePlayerPlaybackStateDidChangeNotification VRVIUMPMoviePlayerPlaybackStateDidChangeNotification
+#define VRVIUMoviePlayerIsAirPlayVideoActiveDidChangeNotification               VRVIUMPMoviePlayerIsAirPlayVideoActiveDidChangeNotification
+#define VRVIUMoviePlayerVideoDecoderOpenNotification VRVIUMPMoviePlayerVideoDecoderOpenNotification
+#define VRVIUMoviePlayerFirstVideoFrameRenderedNotification VRVIUMPMoviePlayerFirstVideoFrameRenderedNotification
+#define VRVIUMoviePlayerFirstAudioFrameRenderedNotification VRVIUMPMoviePlayerFirstAudioFrameRenderedNotification
+#define VRVIUMoviePlayerFirstAudioFrameDecodedNotification VRVIUMPMoviePlayerFirstAudioFrameDecodedNotification
+#define VRVIUMoviePlayerFirstVideoFrameDecodedNotification VRVIUMPMoviePlayerFirstVideoFrameDecodedNotification
+#define VRVIUMoviePlayerOpenInputNotification VRVIUMPMoviePlayerOpenInputNotification
+#define VRVIUMoviePlayerFindStreamInfoNotification VRVIUMPMoviePlayerFindStreamInfoNotification
+#define VRVIUMoviePlayerComponentOpenNotification VRVIUMPMoviePlayerComponentOpenNotification
+
+#define VRVIUMPMoviePlayerAccurateSeekCompleteNotification VRVIUMPMoviePlayerAccurateSeekCompleteNotification
+#define VRVIUMoviePlayerSeekAudioStartNotification VRVIUMPMoviePlayerSeekAudioStartNotification
+#define VRVIUMoviePlayerSeekVideoStartNotification VRVIUMPMoviePlayerSeekVideoStartNotification
+
