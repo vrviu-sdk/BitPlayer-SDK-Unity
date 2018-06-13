@@ -972,7 +972,7 @@ public class BitPlayerTexture : MonoBehaviour
         public void Stop()
         {
             if (m_CurrentState == MEDIAPLAYER_STATE.PLAYING)
-                Call_Pause();
+                Call_Stop();
             m_bStop = true;
             m_CurrentState = MEDIAPLAYER_STATE.STOPPED;
             m_iCurrentSeekPosition = 0;

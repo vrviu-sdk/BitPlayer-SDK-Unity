@@ -153,14 +153,16 @@ public class BitLobby : MonoBehaviour {
         account.appId = "vrviu_altsdk";
         account.bizId = "altsdk_alpha";
         account.accessKey = "a2fe8f5e4767e6c3dca8beb9b410f17a";
+
+
         account.accessKeyId = "dcb0af5f194f410796452a1644132f03";
         if (tag.CompareTag("video 1"))
         {
             videoData.name = "test";
-            videoData.format = (int)VideoFormat.Mono;
-            videoData.url = "http://rs1.pv.vrviu.com/viuggz1sm/viuggz1sm.200000000013.0.mp4";
+            videoData.format = (int)VideoFormat.LeftRight;
+            videoData.url = "http://9870.liveplay.myqcloud.com/live/9870_b560f88603.flv";
             videoData.algorithmType = (int)Algorithm.NONE;
-            videoData.formatDegree = 360;
+            videoData.formatDegree = 180;
             videoData.meshType = (int)MeshType.Erp;
             SceneManager.LoadScene("BitVideo");
         }
