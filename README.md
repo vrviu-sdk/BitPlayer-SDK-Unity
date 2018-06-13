@@ -3,7 +3,7 @@
 [![](https://img.shields.io/badge/Powered%20by-vrviu.com-brightgreen.svg)](https://vrviu.com)
 
 ## 版本
-V1.2
+V1.3
 
 ## 功能说明
 支持VR点播以及VR直播功能。VR点播是播放云端或者本地的文件；VR直播可以是网络主播实时推送的视频流，用户使用此播放器能够看到主播直播的画面。
