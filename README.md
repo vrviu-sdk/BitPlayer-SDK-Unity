@@ -2,8 +2,10 @@
 
 [![](https://img.shields.io/badge/Powered%20by-vrviu.com-brightgreen.svg)](https://vrviu.com)
 
-## 版本
-V1.3
+## 版本历史
+20180525 V1.3 支持8K VR点播视频播放；
+20180514 V1.2 修正bug；
+20180503 V1.1 支持4K VR点播和VR直播；
 
 ## 功能说明
 支持VR点播以及VR直播功能。VR点播是播放云端或者本地的文件；VR直播可以是网络主播实时推送的视频流，用户使用此播放器能够看到主播直播的画面。
@@ -148,4 +150,5 @@ player.Release();
 ## 联系我们
 如果有技术问题咨询，请加入官方QQ群：136562408
 
-商务合作请电话：0755-86960615，或者邮箱：business@vrviu.com
+商务合作请电话：0755-86960615；邮箱：business@vrviu.com；
+或者至官网（http://www.vrviu.com）“联系我们”。
