@@ -3,9 +3,9 @@
 [![](https://img.shields.io/badge/Powered%20by-vrviu.com-brightgreen.svg)](https://vrviu.com)
 
 ## 版本历史
- 20180607 V1.3 支持8K VR点播视频播放   
- 20180514 V1.2 优化SDK，避免了目前多数VR播放SDK由于渲染不当造成的眩晕感   
- 20180503 V1.1 支持4K VR点播和VR直播   
+ 20180607 V1.3 支持8K VR点播视频播放；   
+ 20180514 V1.2 优化SDK，避免了目前多数VR播放SDK由于渲染不当造成的眩晕感；   
+ 20180503 V1.1 支持4K VR点播和VR直播；   
 
 ## 功能说明
  支持最高8K分辨率的VR视频点播/直播功能。其中，VR视频点播支持播放本地或者云端的文件；VR直播支持相机实时推送的视频流。  
@@ -147,6 +147,6 @@ player.Release();
  |AccessKey|分配给用户的ID，可通过 www.vrviu.com 填写表单或者联系客服申请|必填|String
 
 ## 联系我们
- 如果有技术问题咨询，请加入官方QQ群：136562408   
- 商务合作请电话：0755-86960615；邮箱：business@vrviu.com；或者至[官网](http://www.vrviu.com)"联系我们"   
+ 如果有技术问题咨询，请加入官方QQ群：136562408；   
+ 商务合作请电话：0755-86960615；邮箱：business@vrviu.com；或者至[官网](http://www.vrviu.com)"联系我们" 。  
  
