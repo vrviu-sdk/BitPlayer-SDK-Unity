@@ -159,21 +159,21 @@ public class BitLobby : MonoBehaviour {
         if (tag.CompareTag("video 1"))
         {
             videoData.name = "test";
-            videoData.format = (int)VideoFormat.LeftRight;
-            videoData.url = "http://9870.liveplay.myqcloud.com/live/9870_b560f88603.flv";
-            videoData.algorithmType = (int)Algorithm.NONE;
-            videoData.formatDegree = 180;
-            videoData.meshType = (int)MeshType.Erp;
+            videoData.format = (int)VideoFormat.Mono;
+            videoData.url = "http://10.86.0.103/video/mvm/pico/mvm_new_logo/Netherlands_30s_2d/Netherlands_30s_2d_yuv420p/Netherlands_30s_2d_yuv420p_video.hls";
+            videoData.algorithmType = (int)Algorithm.P4;
+            videoData.formatDegree = 360;
+            videoData.meshType = (int)MeshType.Trapezoid;
             SceneManager.LoadScene("BitVideo");
         }
         else if (tag.CompareTag("video 2"))
         {
             videoData.name = "test";
-            videoData.format = (int)VideoFormat.LeftRight;
-            videoData.url = "https://viuencv-in.oss-cn-shenzhen.aliyuncs.com/outvideo/video001.mp4";
-            videoData.algorithmType = (int)Algorithm.NONE;
-            videoData.formatDegree = 180;
-            videoData.meshType = (int)MeshType.Erp;
+            videoData.format = (int)VideoFormat.Mono;
+            videoData.url = "http://10.86.0.103/video/p4/winter_8k_120s/winter_8k_120s/winter_8k_120s_video.hls";
+            videoData.algorithmType = (int)Algorithm.P4;
+            videoData.formatDegree = 360;
+            videoData.meshType = (int)MeshType.Trapezoid;
             SceneManager.LoadScene("BitVideo");
         }
         else if (tag.CompareTag("Exit")) {
