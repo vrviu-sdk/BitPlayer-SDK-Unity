@@ -148,5 +148,5 @@ player.Release();
 
 ## 联系我们
  如果有技术问题咨询，请加入官方QQ群：136562408   
- 商务合作请电话：0755-86960615；邮箱：business@vrviu.com；或者至[官网](http://www.vrviu.com)- "联系我们"。   
+ 商务合作请电话：0755-86960615；邮箱：business@vrviu.com；或者至[官网](http://www.vrviu.com)"联系我们"。   
  
