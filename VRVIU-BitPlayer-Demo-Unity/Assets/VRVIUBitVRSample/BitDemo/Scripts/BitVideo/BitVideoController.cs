@@ -85,7 +85,7 @@ namespace Demo.Video
             account = BitLobby.account;
 
             player.SetupPlayer(data, account);
-
+            player.SetReplay(-1);
             seekBarAdjuster.player = player;
             isLoading = true;
 

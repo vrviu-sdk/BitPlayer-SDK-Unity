@@ -53,18 +53,28 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     mSilverPlayer.OnReady += OnReady;
                     mSilverPlayer.OnVideoFirstFrameReady += OnVideoFirstFrameReady;
                     mSilverPlayer.OnVideoFirstFrameReady += onFrameReady;
-                    mSilverPlayer.setUrl(data.url);
+                    if (!string.IsNullOrEmpty(data.url))
+                    {
+                        mSilverPlayer.setUrl(data.url);
+                    }
+                    else
+                    {
+                        mSilverPlayer.setVideoInfo(data.videoInfo);
+                    }
                     mediaPlayer = null;
                     break;
-                case Algorithm.NONE:
+                case Algorithm.ERP:
                 case Algorithm.NULL:
-                    
                     mSilverPlayer = null;
                     mediaPlayer = gameObject.AddComponent<BitPlayerTexture>();
                     mediaPlayer.m_TargetMaterial = mTargetMaterial;
                     mediaPlayer.mShaderYUV = mShaderYUV;
                     mediaPlayer.init(account);
                     mediaPlayer.setUrl(data.url);
+                    if(mVideoFormater != null)
+                    {
+                        mVideoFormater.SetMeshUrl(data.meshUrl);
+                    }
                     mediaPlayer.OnVideoFirstFrameReady += OnVideoFirstFrameReady;
                     mediaPlayer.OnVideoFirstFrameReady += onFrameReady;
 
@@ -72,8 +82,15 @@ namespace VRVIU.BitVRPlayer.BitVideo
                 default:
                     Debug.LogError("Unknown algorithm " + data.algorithmType);
                     mSilverPlayer = null;
+                    mediaPlayer = gameObject.AddComponent<BitPlayerTexture>();
+                    mediaPlayer.m_TargetMaterial = mTargetMaterial;
                     mediaPlayer.mShaderYUV = mShaderYUV;
+                    mediaPlayer.init(account);
                     mediaPlayer.setUrl(data.url);
+                    if (mVideoFormater != null)
+                    {
+                        mVideoFormater.SetMeshUrl(data.meshUrl);
+                    }
                     mediaPlayer.OnVideoFirstFrameReady += OnVideoFirstFrameReady;
                     mediaPlayer.OnVideoFirstFrameReady += onFrameReady;
                     break;
@@ -96,6 +113,17 @@ namespace VRVIU.BitVRPlayer.BitVideo
             else
             {
                 mediaPlayer.Pause();
+            }
+        }
+
+        public void SetReplay(int count) {
+            if (mSilverPlayer)
+            {
+                mSilverPlayer.SetRePlay(count);
+            }
+            else
+            {
+                //mediaPlayer.SetRePlay(count);
             }
         }
 
@@ -305,13 +333,22 @@ namespace VRVIU.BitVRPlayer.BitVideo
                 mSilverPlayer.m_ViewerFormatScript = gameObject.AddComponent<SetViewerFormat>();
                 switch ((VideoFormat)mData.format)
                 {
-                    case VideoFormat.Mono:
+                    case VideoFormat.OPT_ERP_180_MONO:
+                    case VideoFormat.OPT_ERP_360_MONO:
+                    case VideoFormat.OPT_FISHEYE_MONO:
+                    case VideoFormat.OPT_FLAT_MONO:
                         SetViewerFormat.m_formatType = "mono";
                         break;
-                    case VideoFormat.TopBottom:
+                    case VideoFormat.OPT_ERP_180_TB:
+                    case VideoFormat.OPT_ERP_360_TB:
+                    case VideoFormat.OPT_FISHEYE_TB:
+                    case VideoFormat.OPT_FLAT_TB:
                         SetViewerFormat.m_formatType = "stereo_top_bottom";
                         break;
-                    case VideoFormat.LeftRight:
+                    case VideoFormat.OPT_ERP_180_LR:
+                    case VideoFormat.OPT_ERP_360_LR:
+                    case VideoFormat.OPT_FISHEYE_LR:
+                    case VideoFormat.OPT_FLAT_LR:
                         SetViewerFormat.m_formatType = "stereo_left_right";
                         break;
                     default:
@@ -324,75 +361,12 @@ namespace VRVIU.BitVRPlayer.BitVideo
 
                 return;
             }
-            if (mData.meshType == (int)MeshType.Erp)
-            {
-                if (mData.format == (int)VideoFormat.Mono)
-                {
-                    if (mData.formatDegree == 180)
-                    {
-                        mVideoFormater.Switch(VideoFormat.OPT_ERP_180);
-                    }
-                    else
-                    {
-                        mVideoFormater.Switch(VideoFormat.OPT_ERP_360);
-                    }
+            else {
 
-                }
-                else if (mData.format == (int)VideoFormat.LeftRight)
-                {
-                    
-                    if (mData.formatDegree == 180)
-                    {
-                        mVideoFormater.Switch(VideoFormat.OPT_ERP_180_LR);
-                    }
-                    else
-                    {
-                        mVideoFormater.Switch(VideoFormat.OPT_ERP_360_LR);
-                    }
-
-                }
-                else if (mData.format == (int)VideoFormat.TopBottom)
-                {
-                    if (mData.formatDegree == 180)
-                    {
-                        mVideoFormater.Switch(VideoFormat.OPT_ERP_360_LR);
-                    }
-                    else
-                    {
-                        mVideoFormater.Switch(VideoFormat.OPT_ERP_360_TB);
-                    }
-
-                }
+                mVideoFormater.Switch(mData.format);
             }
-            else if (mData.meshType == (int)MeshType.Fisheye)
-            {
-                if (mData.format == (int)VideoFormat.Mono)
-                {
-                    mVideoFormater.Switch(VideoFormat.OPT_FISHEYE);
-                }
-                else if (mData.format == (int)VideoFormat.LeftRight)
-                {
-                    mVideoFormater.Switch(VideoFormat.OPT_FISHEYE_LR);
-                }
-                else if (mData.format == (int)VideoFormat.TopBottom)
-                {
-                    mVideoFormater.Switch(VideoFormat.OPT_FISHEYE_TB);
-                }
-            } else if (mData.meshType == (int)MeshType.Trapezoid) {
-                if (mData.format == (int)VideoFormat.Mono)
-                {
-                    mVideoFormater.Switch(VideoFormat.OPT_TROPIZED_MONO);
-                }
-                else if (mData.format == (int)VideoFormat.LeftRight)
-                {
-                    mVideoFormater.Switch(VideoFormat.OPT_TROPIZED_LR);
-                }
-                else if (mData.format == (int)VideoFormat.TopBottom)
-                {
-                    mVideoFormater.Switch(VideoFormat.OPT_TROPIZED_TB);
-                }
-            }
-		
+
+           
         }
 
         private void onFrameReady()

@@ -17,6 +17,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
 
         private const string LEFT_EYE_LAYER_NAME = "LeftEye";
         private const string RIGHT_EYE_LAYER_NAME = "RightEye";
+        private const string UI_LAYER_NAME = "UI";
 
         private const string LEFT_EYE_IMAGE_SPHERE_NAME = "LeftSide/Holder";
         private const string RIGHT_EYE_IMAGE_SPHERE_NAME = "RightSide/Holder";
@@ -71,7 +72,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         {
             int LEFT_EYE_LAYER_MASK = (1 << LayerMask.NameToLayer(LEFT_EYE_LAYER_NAME));
             int RIGHT_EYE_LAYER_MASK = (1 << LayerMask.NameToLayer(RIGHT_EYE_LAYER_NAME));
-
+            int UI_LAYER_MASK = (1 << LayerMask.NameToLayer(UI_LAYER_NAME));
             // set up camera and image materials for specified playback format
 
             // monoscopic image
@@ -95,7 +96,10 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                 leftEyeCameraComponent.stereoTargetEye = StereoTargetEyeMask.Both;
 
                 // only need to show left eye layer display (since we will display same image on both eyes)
-                leftEyeCameraComponent.cullingMask = LEFT_EYE_LAYER_MASK;
+                leftEyeCameraComponent.cullingMask = LEFT_EYE_LAYER_MASK+ UI_LAYER_MASK;
+
+                rightEyeCameraComponent.stereoTargetEye = StereoTargetEyeMask.Both;
+                rightEyeCameraComponent.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK;
 
             }
             else

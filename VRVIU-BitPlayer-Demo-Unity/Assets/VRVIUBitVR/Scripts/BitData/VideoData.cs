@@ -1,8 +1,10 @@
 ﻿//-----------------------------------------------------
 //            VRVIU: VRVIU-VR-PLAYER
-//            Author: hogan.yin@vrviu.com  
+//            Author: kevin.zha@vrviu.com  
 // Copyright © 2016-2018 VRVIU Technologies Limited. 
 //-----------------------------------------------------
+
+using VRVIU.BitVRPlayer.BitVideo;
 
 namespace VRVIU.BitVRPlayer.BitData
 {
@@ -11,22 +13,22 @@ namespace VRVIU.BitVRPlayer.BitData
     {
         public string name;
 
-        public int format;
+        public VideoFormat format;
 
         public string description;
 
         public string url;
-
+        
         public string thumbnail;
-
-        public int formatDegree;
-
+        
         public int algorithmType;
-
-        public int meshType;
 
         public int duration;
 
         public string bitrate;
+
+        public string meshUrl;
+
+        public string videoInfo;
     }
 }

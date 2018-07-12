@@ -322,7 +322,9 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         private static extern SILVER_ERROR silverSetReplay(IntPtr s, int replayCount);
         [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
         private static extern SILVER_ERROR silverGetError(IntPtr s);
-        #endif
+        [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
+        private static extern SILVER_ERROR silverSetVideoInfo(IntPtr s, String videoInfo, int size);
+#endif
 
         //******************
         //* PLEASE NOTE: Inclusion of vrviu_base is ONLY temporary! This is necessary for ExoPlayer support & squishmesh
@@ -457,6 +459,19 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         {
             if (m_Instance == IntPtr.Zero) return SILVER_ERROR.SILVER_NOT_EXIST;
             return silverSetVideoUrl(m_Instance, URL);
+        }
+
+
+        //
+        // @fn SILVER_ERROR silverSetVideoUrl(SilverPlayer* p, const char* pUrl)
+        // @brief Sets the video's url to use.
+        // @param \pPlayer Pointer to player object
+        // @param \video info of the video
+        // @return SILVER_SUCCESS on function success, other error code on failure.
+        public SILVER_ERROR SetVideoInfo(string videoInfo, int size)
+        {
+            if (m_Instance == IntPtr.Zero) return SILVER_ERROR.SILVER_NOT_EXIST;
+            return silverSetVideoInfo(m_Instance, videoInfo, size);
         }
 
         //
@@ -894,13 +909,12 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         // @param \pPlayer Pointer to player object
         // @param \replayCount Number of times to replay, 0=never, -1=always, >0=number of times
         // @return Return code
-        /*
         public SILVER_ERROR SetReplay(int replayCount)
         {
             if (m_Instance == IntPtr.Zero) return SILVER_ERROR.SILVER_NOT_EXIST;
             return silverSetReplay(m_Instance,replayCount);
         }
-        */
+       
         //
         //-------------------------------------------------------------------------
         // This is a temporary only helper function; to allow external squish mesh

@@ -482,6 +482,11 @@ public class BitPlayerTexture : MonoBehaviour
                 m_CurrentState = Call_GetStatus();
                 if (m_CurrentState == MEDIAPLAYER_STATE.READY)
                 {
+                    string seiInfo = Call_GetSeiInfo();
+                    if (seiInfo != null)
+                    {
+                        Debug.Log("GetSeiInfo " + seiInfo);
+                    }
                     if (OnReady != null)
                         OnReady();
 
@@ -1281,6 +1286,11 @@ public class BitPlayerTexture : MonoBehaviour
 	private void Call_SetSeekPosition(int iSeek)
 	{
 	GetJavaObject().Call("SetSeekPosition",iSeek);
+	}
+
+    private string Call_GetSeiInfo()
+	{
+	    return GetJavaObject().Call<String>("GetSeiInfo");
 	}
 
 	private int Call_GetSeekPosition()
@@ -3078,6 +3088,11 @@ public class BitPlayerTexture : MonoBehaviour
                 m_CurrentState = MEDIAPLAYER_STATE.PLAYING;
             }
 
+        }
+
+        private string Call_GetSeiInfo()
+        {
+            return null;
         }
 
         private void Call_Reset()

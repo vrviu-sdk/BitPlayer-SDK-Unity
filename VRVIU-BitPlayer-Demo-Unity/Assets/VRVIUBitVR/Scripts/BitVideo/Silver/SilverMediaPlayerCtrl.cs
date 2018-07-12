@@ -37,6 +37,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         public float m_AutoRotationSpeed = 1.0f;
         public bool m_bDisplayRotation = false;
         private string m_strFileName;
+        private string m_videoInfo;
         private string m_meshUrl;
         private string m_filterVersion;
         public SetViewerFormat m_ViewerFormatScript = null;
@@ -69,6 +70,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         float m_debugRotation = -180.0f;
 
         private bool m_bIsFirstFrameReady;
+
+        private int m_replayCount = 0;
         public Shader mShaderYUV;
         public enum MEDIAPLAYER_ERROR
         {
@@ -418,12 +421,28 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             }
         }
 
-        //-------------------------------------------------------------------------
-        private void InitializePlayback()
+
+        private void Call_SetUrl(string url)
         {
             m_VideoTexture = null;
+            SilverPlayer.SILVER_ERROR Result = m_Player.Initialize();
+            m_Player.SetReplay(m_replayCount);
+            Result = m_Player.SetVideoUrl(m_strFileName.Trim());
             Call_Prepare();
-            Call_SetLooping(m_bLoop);
+        }
+
+        private void Call_SetVideoInfo(string videoInfo, int size)
+        {
+            m_VideoTexture = null;
+            SilverPlayer.SILVER_ERROR Result = m_Player.Initialize();
+            m_Player.SetReplay(m_replayCount);
+            Result = m_Player.SetVideoInfo(videoInfo, size);
+            Call_Prepare();
+        }
+        private void Call_Prepare()
+        {
+
+            SilverPlayer.SILVER_ERROR Result = m_Player.Prepare();
         }
 
         //-------------------------------------------------------------------------
@@ -432,7 +451,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         IntPtr m_lastTexId = IntPtr.Zero;
         void Update()
         {
-            if (string.IsNullOrEmpty(m_strFileName))
+            if (string.IsNullOrEmpty(m_strFileName) && string.IsNullOrEmpty(m_videoInfo))
             {
                 return;
             }
@@ -440,17 +459,18 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             // Any attached exoplayer playback instance takes over, here.
             if (!m_bInitializedMoviePlayback)
             {
-                String extension = Path.GetExtension(m_strFileName).ToLower();
-                if (extension == ".flv" || extension == ".mp4")
+                if (!string.IsNullOrEmpty(m_strFileName))
                 {
-                    //m_ExoPlayer = gameObject.AddComponent<VRVIU.Silver180.MediaPlayerCtrl>();
-                    //m_ExoPlayer.m_TargetMaterial = m_TargetMaterial;
-                    //m_ExoPlayer.Load(m_strFileName, m_meshUrl, m_filterVersion );
-                    //return;
+                    String extension = Path.GetExtension(m_strFileName).ToLower();
+                    // Any attached exoplayer playback instance takes over, here.
+                    Call_SetUrl(m_strFileName);
+                    m_bInitializedMoviePlayback = true;
                 }
-
-                InitializePlayback();
-                m_bInitializedMoviePlayback = true;
+                else if (!string.IsNullOrEmpty(m_videoInfo))
+                {
+                    Call_SetVideoInfo(m_videoInfo, m_videoInfo.Length);
+                    m_bInitializedMoviePlayback = true;
+                }
                 UnityEngine.XR.InputTracking.Recenter();
             }
             Call_Update();
@@ -932,6 +952,25 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         }
 
         //-------------------------------------------------------------------------
+        public void setVideoInfo(string videoInfo)
+        {
+            m_videoInfo = videoInfo;
+
+            if (m_CurrentState.eState != MEDIAPLAYER_STATE.NOT_READY)
+                UnLoad();
+
+            m_bIsFirstFrameReady = false;
+
+            m_bInitializedMoviePlayback = false;
+            m_bCheckFBO = false;
+
+            if (m_bInit == false)
+                return;
+
+            m_CurrentState.eState = MEDIAPLAYER_STATE.NOT_READY;
+        }
+
+        //-------------------------------------------------------------------------
         public void SetVolume(float fVolume)
         {
             if (mediaStateIsReadyOrActive.Contains(m_CurrentState.eState))
@@ -978,6 +1017,10 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                 m_fSpeed = fSpeed;
                 Call_SetSpeed(m_fSpeed);
             }
+        }
+
+        public void SetRePlay(int count) {
+            Call_SetReplay(count);
         }
 
         //-------------------------------------------------------------------------
@@ -1218,6 +1261,9 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             m_Player.SeekTo(lSeek);
         }
 
+        private void Call_SetReplay(int count) {
+            m_replayCount = count;
+        }
         private long Call_GetSeekPosition()
         {
             SilverPlayer.SILVER_ERROR Result;
@@ -1265,18 +1311,6 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             return mesh;
         }
 
-        private void Call_Prepare()
-        {
-            SilverPlayer.SILVER_ERROR Result = m_Player.Initialize();
-            //m_Player.SetReplay(-1);
-            Result = m_Player.SetVideoUrl(m_strFileName.Trim());
-            Result = m_Player.Prepare();
-        }
-
-        private void Call_SetLooping(bool bLoop)
-        {
-
-        }
 
         private int Call_GetError()
         {

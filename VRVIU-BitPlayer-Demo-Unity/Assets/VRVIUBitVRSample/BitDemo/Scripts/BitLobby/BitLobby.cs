@@ -153,27 +153,21 @@ public class BitLobby : MonoBehaviour {
         account.appId = "vrviu_altsdk";
         account.bizId = "altsdk_alpha";
         account.accessKey = "a2fe8f5e4767e6c3dca8beb9b410f17a";
-
-
         account.accessKeyId = "dcb0af5f194f410796452a1644132f03";
+       
         if (tag.CompareTag("video 1"))
         {
             videoData.name = "test";
-            videoData.format = (int)VideoFormat.Mono;
-            videoData.url = "http://10.86.0.103/video/mvm/pico/mvm_new_logo/Netherlands_30s_2d/Netherlands_30s_2d_yuv420p/Netherlands_30s_2d_yuv420p_video.hls";
-            videoData.algorithmType = (int)Algorithm.P4;
-            videoData.formatDegree = 360;
-            videoData.meshType = (int)MeshType.Trapezoid;
+            videoData.format = VideoFormat.OPT_ERP_180_LR;
+            videoData.url = "http://9870.liveplay.myqcloud.com/live/9870_b2d0b09280.flv";
+            videoData.algorithmType = (int)Algorithm.ERP;
             SceneManager.LoadScene("BitVideo");
         }
         else if (tag.CompareTag("video 2"))
         {
-            videoData.name = "test";
-            videoData.format = (int)VideoFormat.Mono;
-            videoData.url = "http://10.86.0.103/video/p4/winter_8k_120s/winter_8k_120s/winter_8k_120s_video.hls";
+            videoData.format = VideoFormat.OPT_ERP_360_MONO;
+            videoData.url = "http://viuencv-in.oss-cn-shenzhen.aliyuncs.com/mvm/2D_360_4k_t-10s/2D_360_4k_t-10s_video.hls";
             videoData.algorithmType = (int)Algorithm.P4;
-            videoData.formatDegree = 360;
-            videoData.meshType = (int)MeshType.Trapezoid;
             SceneManager.LoadScene("BitVideo");
         }
         else if (tag.CompareTag("Exit")) {
