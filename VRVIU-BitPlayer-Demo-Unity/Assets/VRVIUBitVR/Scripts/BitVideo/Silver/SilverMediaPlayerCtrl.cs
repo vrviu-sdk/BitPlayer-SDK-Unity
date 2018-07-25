@@ -1048,7 +1048,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                 {
                     return 0;
                 }
-                return (float)GetSeekPosition() / (float)GetDuration();
+
+                return (float)GetSeekPosition() / (float)GetDuration();// duration is 0 ?
             }
             else
             {

@@ -93,9 +93,8 @@ namespace VRVIU.BitVRPlayer.BitVideo
         private GameObject leftEyeCameraObject = null;
         private GameObject rightEyeCameraObject = null;
         #endregion
-		 
-        // Use this for initialization
-        void Start()
+
+        private void Awake()
         {
             if (leftSide != null)
             {
@@ -104,9 +103,9 @@ namespace VRVIU.BitVRPlayer.BitVideo
             }
 
             if (rightSide != null)
-			{
-				
-				
+            {
+
+
                 rightSideMeshFilter = rightSide.GetComponent<MeshFilter>();
                 rightSideMeshRenderer = rightSide.GetComponent<MeshRenderer>();
             }
@@ -138,6 +137,11 @@ namespace VRVIU.BitVRPlayer.BitVideo
                 Debug.LogWarning("Missing left or right eye camera in your scene, which will cause stereo unavailable.");
             }
 
+        }
+        // Use this for initialization
+        void Start()
+        {
+           
             //Switch();
 
         }
@@ -155,6 +159,14 @@ namespace VRVIU.BitVRPlayer.BitVideo
             UnloadMaterial();
         }
 
+        public MeshFilter GetLeftMesh() {
+            return leftSideMeshFilter;
+        }
+
+        public MeshFilter GetRightMesh() {
+            return rightSideMeshFilter;
+        }
+
         /// <summary>
         /// Switch to any supported video format.
         /// </summary>
@@ -164,7 +176,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 this.format = format;
             }
-           
+            Switch();
         }
 
         public void SetMeshUrl(string url) {
@@ -181,6 +193,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             int LEFT_EYE_LAYER_MASK  = (1 << LayerMask.NameToLayer(LEFT_EYE_LAYER_NAME))  | (1 << 0);
             int RIGHT_EYE_LAYER_MASK = (1 << LayerMask.NameToLayer(RIGHT_EYE_LAYER_NAME)) | (1 << 0);
             int UI_LAYER_MASK =  (1 << LayerMask.NameToLayer(UI_LAYER_NAME)) | (1 << 0);
+            Debug.Log("video format switch "+ format);
             // Monoscopic
             if (format == VideoFormat.OPT_FLAT_MONO || format == VideoFormat.OPT_ERP_180_MONO || format == VideoFormat.OPT_ERP_360_MONO
                 || format == VideoFormat.OPT_FISHEYE_MONO || format == VideoFormat.OPT_TROPIZED_MONO)
@@ -283,20 +296,25 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 //meshType = SilverPlayer.MeshType.eMeshTypeTropized;
             }
+            else if (format == VideoFormat.OPT_FLAT_MONO || format == VideoFormat.OPT_FLAT_LR || format == VideoFormat.OPT_FLAT_TB) {
+                meshType = SilverPlayer.MeshType.eMeshTypePlane;
+            }
             else
             {
                 Debug.LogError("ERROR: unknown video format input.");
                 return;
             }
-            if (m_mesh_url != null && m_mesh_url.Length > 0) {
+          
+            defaultMesh = SilverPlayer.GenerateMesh(meshType, meshQuality, density,20 ,20);
+            
+            if (!string.IsNullOrEmpty(m_mesh_url) && format != VideoFormat.OPT_FLAT_MONO &&
+                    format != VideoFormat.OPT_FLAT_LR && format != VideoFormat.OPT_FLAT_TB)
+            {
                 defaultMesh = loadMesh(m_mesh_url);
             }
-            if(defaultMesh == null) { 
-                defaultMesh = SilverPlayer.GenerateMesh(meshType, meshQuality, density);
-            }
-            
             if (leftSideMeshFilter != null && defaultMesh != null)
             {
+                //Debug.LogError("Generate meshtype "+ meshType);
                 leftSideMeshFilter.mesh = defaultMesh;
             }
 
@@ -304,6 +322,11 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 rightSideMeshFilter.mesh = defaultMesh;
             }
+            //}
+           // else {
+
+            //}
+           
             #endregion
         }
 

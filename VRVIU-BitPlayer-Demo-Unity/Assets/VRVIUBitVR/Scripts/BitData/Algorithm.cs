@@ -8,6 +8,6 @@ namespace VRVIU.BitVRPlayer.BitVRPlayer.BitData
 {
     public enum Algorithm
     {
-        NULL = 0, ERP = 1, P4 = 2, FE = 3, ROI = 4, ROIMapping = 5, MVM = 6
+        NULL = 0, ERP = 1, P4 = 2, FE = 3, ROI = 4, ROIMapping = 5, MVM = 8
     }
 }

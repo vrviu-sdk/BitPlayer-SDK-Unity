@@ -37,15 +37,14 @@ namespace VRVIU.BitVRPlayer.BitVideo
         public void SetupPlayer(VideoData data, Account account)
         {
             mData = data;
-
-			SwitchVideoFormat();
-
+            
             switch ((Algorithm)data.algorithmType)
             {
                 case Algorithm.ROI:
                 case Algorithm.FE:
                 case Algorithm.ROIMapping:
                 case Algorithm.P4:
+                case Algorithm.MVM:
                     mSilverPlayer = gameObject.AddComponent<SilverMediaPlayerCtrl>();
                     mSilverPlayer.mShaderYUV = mShaderYUV;
                     mSilverPlayer.m_ViewerFormatScript = gameObject.AddComponent<SetViewerFormat>();
@@ -61,6 +60,11 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     {
                         mSilverPlayer.setVideoInfo(data.videoInfo);
                     }
+                    if (data.format != VideoFormat.OPT_UNKONW)
+                    {
+                        SwitchVideoFormat();
+                    }
+                    
                     mediaPlayer = null;
                     break;
                 case Algorithm.ERP:
@@ -71,36 +75,190 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     mediaPlayer.mShaderYUV = mShaderYUV;
                     mediaPlayer.init(account);
                     mediaPlayer.setUrl(data.url);
-                    if(mVideoFormater != null)
+                    if(mVideoFormater != null && data != null && !string.IsNullOrEmpty(data.meshUrl))
                     {
                         mVideoFormater.SetMeshUrl(data.meshUrl);
                     }
                     mediaPlayer.OnVideoFirstFrameReady += OnVideoFirstFrameReady;
                     mediaPlayer.OnVideoFirstFrameReady += onFrameReady;
-
+                    if (data.format != VideoFormat.OPT_UNKONW)
+                    {
+                        mVideoFormater.Switch(data.format);
+                    }
                     break;
                 default:
                     Debug.LogError("Unknown algorithm " + data.algorithmType);
-                    mSilverPlayer = null;
-                    mediaPlayer = gameObject.AddComponent<BitPlayerTexture>();
-                    mediaPlayer.m_TargetMaterial = mTargetMaterial;
-                    mediaPlayer.mShaderYUV = mShaderYUV;
-                    mediaPlayer.init(account);
-                    mediaPlayer.setUrl(data.url);
-                    if (mVideoFormater != null)
+                    mSilverPlayer = gameObject.AddComponent<SilverMediaPlayerCtrl>();
+                    mSilverPlayer.mShaderYUV = mShaderYUV;
+                    mSilverPlayer.m_ViewerFormatScript = gameObject.AddComponent<SetViewerFormat>();
+                    mSilverPlayer.m_TargetMaterial = mTargetMaterial;
+                    mSilverPlayer.OnReady += OnReady;
+                    mSilverPlayer.OnVideoFirstFrameReady += OnVideoFirstFrameReady;
+                    mSilverPlayer.OnVideoFirstFrameReady += onFrameReady;
+                    if (!string.IsNullOrEmpty(data.url))
                     {
-                        mVideoFormater.SetMeshUrl(data.meshUrl);
+                        mSilverPlayer.setUrl(data.url);
                     }
-                    mediaPlayer.OnVideoFirstFrameReady += OnVideoFirstFrameReady;
-                    mediaPlayer.OnVideoFirstFrameReady += onFrameReady;
+                    else
+                    {
+                        mSilverPlayer.setVideoInfo(data.videoInfo);
+                    }
+                    if (data.format != VideoFormat.OPT_UNKONW)
+                    {
+                        SwitchVideoFormat();
+                    }
+                    mediaPlayer = null;
                     break;
+            }
+        }
+
+        private VideoFormat ConvertFormat(VideoPorjection projection, VideoSteroType stereoType, VideoHfov hfov)
+        {
+            VideoFormat videoFormat = VideoFormat.OPT_ERP_360_MONO;
+            if (projection ==  VideoPorjection.OPT_ERP)
+            {
+                switch (stereoType)
+                {
+                    case VideoSteroType.OPT_MONO:
+                        if (hfov == VideoHfov.DEGREE_180)
+                        {
+                            videoFormat = VideoFormat.OPT_ERP_180_MONO;
+                        }
+                        else if (hfov == VideoHfov.DEGREE_360)
+                        {
+                            videoFormat = VideoFormat.OPT_ERP_360_MONO;
+                        }
+                        else
+                        {
+                            videoFormat = VideoFormat.OPT_ERP_360_MONO;
+                        }
+                        break;
+                    case VideoSteroType.OPT_STERO_LR:
+                        if (hfov == VideoHfov.DEGREE_180)
+                        {
+                            videoFormat = VideoFormat.OPT_ERP_180_LR;
+                        }
+                        else if (hfov ==  VideoHfov.DEGREE_360)
+                        {
+                            videoFormat = VideoFormat.OPT_ERP_360_LR;
+                        }
+                        else
+                        {
+                            videoFormat = VideoFormat.OPT_ERP_360_LR;
+                        }
+                        break;
+                    case VideoSteroType.OPT_STERO_TB:
+                        if (hfov ==  VideoHfov.DEGREE_180)
+                        {
+                            videoFormat = VideoFormat.OPT_ERP_180_TB;
+                        }
+                        else if (hfov == VideoHfov.DEGREE_360)
+                        {
+                            videoFormat = VideoFormat.OPT_ERP_360_TB;
+                        }
+                        else
+                        {
+                            videoFormat = VideoFormat.OPT_ERP_360_TB;
+                        }
+                        break;
+                    case VideoSteroType.OPT_STERO_RL:
+                        break;
+                    case VideoSteroType.OPT_STERO_BT:
+                        break;
+                    default:
+                        break;
+                }
+            }
+            else if (projection == VideoPorjection.OPT_FISHEYE)
+            {
+                switch (stereoType)
+                {
+                    case  VideoSteroType.OPT_MONO:
+                        videoFormat = VideoFormat.OPT_FISHEYE_MONO;
+                        break;
+                    case VideoSteroType.OPT_STERO_LR:
+                        videoFormat = VideoFormat.OPT_FISHEYE_LR;
+                        break;
+                    case VideoSteroType.OPT_STERO_TB:
+                        videoFormat = VideoFormat.OPT_FISHEYE_TB;
+                        break;
+                    case VideoSteroType.OPT_STERO_RL:
+                        break;
+                    case VideoSteroType.OPT_STERO_BT:
+                        break;
+                    default:
+                        videoFormat = VideoFormat.OPT_FISHEYE_MONO;
+                        break;
+                }
+            }
+            else if (projection == VideoPorjection.OPT_TROPIZOED)
+            {
+                switch (stereoType)
+                {
+                    case VideoSteroType.OPT_MONO:
+                        videoFormat = VideoFormat.OPT_TROPIZED_MONO;
+                        break;
+                    case VideoSteroType.OPT_STERO_LR:
+                        videoFormat = VideoFormat.OPT_TROPIZED_LR;
+                        break;
+                    case VideoSteroType.OPT_STERO_TB:
+                        videoFormat = VideoFormat.OPT_TROPIZED_TB;
+                        break;
+                    case VideoSteroType.OPT_STERO_RL:
+                        break;
+                    case VideoSteroType.OPT_STERO_BT:
+                        break;
+                    default:
+                        videoFormat = VideoFormat.OPT_TROPIZED_MONO;
+                        break;
+                }
+            }
+            else if (projection == VideoPorjection.OPT_FLAT)
+            {
+                switch (stereoType)
+                {
+                    case VideoSteroType.OPT_MONO:
+                        videoFormat = VideoFormat.OPT_FLAT_MONO;
+                        break;
+                    case VideoSteroType.OPT_STERO_LR:
+                        videoFormat = VideoFormat.OPT_FLAT_LR;
+                        break;
+                    case VideoSteroType.OPT_STERO_TB:
+                        videoFormat = VideoFormat.OPT_FLAT_TB;
+                        break;
+                    case VideoSteroType.OPT_STERO_RL:
+                        break;
+                    case VideoSteroType.OPT_STERO_BT:
+                        break;
+                    default:
+                        videoFormat = VideoFormat.OPT_FLAT_MONO;
+                        break;
+                }
+            }
+            return videoFormat;
+        }
+
+        public void SetVideoFormat(VideoPorjection projection, VideoSteroType steroType, VideoHfov hfov) {
+            VideoFormat format = ConvertFormat(projection, steroType,hfov);
+            Debug.Log("set video format "+format +" projection "+ projection +" steroType "+steroType + " hfov "+hfov);
+            if (mediaPlayer) {
+                mVideoFormater.Switch(format);
+            }
+        }
+
+        public void AutoVideoFormat() {
+            if (mediaPlayer)
+            {
+                //mediaPlayer.SetVideoFormat(format);
             }
         }
 
         public void Play() {
             if (mSilverPlayer) {
                 mSilverPlayer.Play();
-            } else {
+            }
+            else if (mediaPlayer)
+            {
                 mediaPlayer.Play();
             }
         }
@@ -121,7 +279,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 mSilverPlayer.SetRePlay(count);
             }
-            else
+            else if (mediaPlayer)
             {
                 //mediaPlayer.SetRePlay(count);
             }
@@ -133,7 +291,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
                 mSilverPlayer.Stop();
                 mSilverPlayer.UnLoad();
             }
-            else
+            else if (mediaPlayer)
             {
                 mediaPlayer.Stop();
                 mediaPlayer.UnLoad();
@@ -146,7 +304,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 //value = mSilverPlayer.GetVideoWidth();
             }
-            else
+            else if (mediaPlayer)
             {
                 value = mediaPlayer.GetVideoWidth();
             }
@@ -159,7 +317,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 //value = mSilverPlayer.GetVideoHeight();
             }
-            else
+            else if (mediaPlayer)
             {
                 value = mediaPlayer.GetVideoHeight();
             }
@@ -171,7 +329,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             if (mSilverPlayer){
                 value = mSilverPlayer.GetSeekBarValue();
             }
-            else{
+            else if (mediaPlayer){
                 value = mediaPlayer.GetSeekBarValue();
             }
             return value;
@@ -183,7 +341,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 mSilverPlayer.SetSeekBarValue(fValue);
             }
-            else
+            else if (mediaPlayer)
             {
                 mediaPlayer.SetSeekBarValue(fValue);
             }
@@ -194,7 +352,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 mSilverPlayer.SeekTo(iSeek);
             }
-            else
+            else if (mediaPlayer)
             {
                 mediaPlayer.SeekTo(iSeek);
             }
@@ -205,7 +363,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 mSilverPlayer.SetVolume(fVolume);
             }
-            else
+            else if (mediaPlayer)
             {
                 mediaPlayer.SetVolume(fVolume);
             }
@@ -217,7 +375,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 mSilverPlayer.SetSpeed(fSpeed);
             }
-            else
+            else if (mediaPlayer)
             {
                 mediaPlayer.SetSpeed(fSpeed);
             }
@@ -239,12 +397,12 @@ namespace VRVIU.BitVRPlayer.BitVideo
 
         public MEDIAPLAYER_STATE GetCurrentState()
         {
-            MEDIAPLAYER_STATE currentState;
+            MEDIAPLAYER_STATE currentState = MEDIAPLAYER_STATE.NOT_READY;
             if (mSilverPlayer)
             {
                currentState = mSilverPlayer.GetCurrentState();
             }
-            else
+            else if(mediaPlayer)
             {
                 currentState = mediaPlayer.GetCurrentState();
             }
@@ -268,7 +426,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 mSilverPlayer.setUrl(mData.url);
             }
-            else
+            else if (mediaPlayer)
             {
                 mediaPlayer.setUrl(mData.url);
             }
@@ -290,7 +448,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 mSilverPlayer.Stop();
             }
-            else
+            else if (mediaPlayer)
             {
                 mediaPlayer.Stop();
             }
@@ -360,18 +518,12 @@ namespace VRVIU.BitVRPlayer.BitVideo
                 mSilverPlayer.m_ViewerFormatScript.SetUpViewerFormat();
 
                 return;
-            }
-            else {
-
-                mVideoFormater.Switch(mData.format);
-            }
-
-           
+            }    
         }
 
         private void onFrameReady()
         {
-            SwitchVideoFormat();
+            //SwitchVideoFormat();
         }
     }
 }

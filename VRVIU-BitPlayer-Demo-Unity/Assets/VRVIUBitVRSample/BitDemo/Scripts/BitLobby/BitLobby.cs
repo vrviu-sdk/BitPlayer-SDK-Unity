@@ -159,7 +159,7 @@ public class BitLobby : MonoBehaviour {
         {
             videoData.name = "test";
             videoData.format = VideoFormat.OPT_ERP_180_LR;
-            videoData.url = "http://9870.liveplay.myqcloud.com/live/9870_b2d0b09280.flv";
+            videoData.url = "http://viuencv-in.oss-cn-shenzhen.aliyuncs.com/outvideo/video001.mp4";
             videoData.algorithmType = (int)Algorithm.ERP;
             SceneManager.LoadScene("BitVideo");
         }

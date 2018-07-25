@@ -944,6 +944,16 @@ public class BitPlayerTexture : MonoBehaviour
             return m_CurrentState;
         }
 
+        public void SetVideoFormat(VideoFormat format)
+        {
+            
+        }
+
+        public void AutoVideoFormat()
+        {
+
+        }
+
         public Texture2D GetVideoTexture()
         {
             return m_VideoTexture;

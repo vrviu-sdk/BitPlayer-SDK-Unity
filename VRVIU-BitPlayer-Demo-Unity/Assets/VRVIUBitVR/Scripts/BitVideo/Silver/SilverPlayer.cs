@@ -105,20 +105,24 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
 
         public enum SilverVideoType
         {
-            eSilverEquirectangular = 0,
-            eSilverMeshForm = 1,
-            eSilverRegionInterest = 2,
-            eSilverFoveated = 3,
+            eSilverUnknownVideoType = 0, //!< Unknown type
+            eSilverEquirectangular = 1, //!< Equirectangular projection (ERP)
+            eSilverMeshForm = 2, //!< Flexible geometric mesh format. Mesh must be loaded and supplied with the video stream.
+            eSilverFoveated = 3, //!< Foveated encoding
+            eSilverRegionInterest = 4, //!< Region of Interest based encoding
+            eSilverRegionInterestMapping = 5, //!< Region of Interest and mapping
+            eSilverMultiViewMapping = 8, //!< Multi View mapping
             eNumVideoTypes
         }
         public enum SilverSourceFormat
         {
-            eSilverSource_Mono = 0,
-            eSilverSource_Stereo_L_R = 1,
-            eSilverSource_Stereo_T_B = 2,
-            eSilverSource_Stereo_R_L = 3,
-            eSilverSource_Stereo_B_T = 4,
-            eNumNumSourceFormats
+            eSilverSource_Unknown = 0, //!< Unknown video format
+            eSilverSource_Mono = 1, //!< Monoscopic video, not 3D
+            eSilverSource_Stereo_L_R = 2, //!< Stereoscopic video, left eye image on the left half, right eye image on the right half
+            eSilverSource_Stereo_T_B = 3, //!< Stereoscopic video, left eye image on the top half, right eye image on the bottom half
+            eSilverSource_Stereo_R_L = 4, //!< Stereoscopic video, left eye image on the right half, right eye image on the left half
+            eSilverSource_Stereo_B_T = 5, //!< Stereoscopic video, left eye image on the bottom half, right eye image on the top half
+            eNumSourceFormats
         }
         public unsafe struct SilverConfiguration
         {
@@ -335,7 +339,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             eMeshTypeErp180 = 0,
             eMeshTypeFisheye180,
             eMeshTypeErp360,
-            eMeshTypeTropized,
+            eMeshTypeErp,
+            eMeshTypePlane,
             eMeshTypeInvalid
         };
 
@@ -349,7 +354,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
 
 #else
         [DllImport("silver-sdk")]
-        private static extern SILVER_ERROR silverGenerateMesh(MeshType type, MeshQuality quality, float density, out SilverMesh mesh);
+        private static extern SILVER_ERROR silverGenerateMesh(MeshType type, MeshQuality quality, float density, int width, int height,out SilverMesh mesh);
         [DllImport("vrviu_base")]
         private static extern void vrviu_filter_set_version(int filterType);
 #endif
@@ -982,7 +987,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                     break;
             }
 
-            silverGenerateMesh(meshType, meshQuality, meshConfig.squish.density, out mesh);
+            silverGenerateMesh(meshType, meshQuality, meshConfig.squish.density,0,0, out mesh);
 
             Mesh finalMesh = SilverMeshToUnityMesh(mesh);
 
@@ -990,11 +995,11 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         }
 
         //-------------------------------------------------------------------------
-        public static Mesh GenerateMesh(MeshType meshType, MeshQuality meshQuality, float density)
+        public static Mesh GenerateMesh(MeshType meshType, MeshQuality meshQuality, float density, int width, int height)
         {
             SilverMesh mesh = new SilverMesh();
 
-            silverGenerateMesh(meshType, meshQuality, density, out mesh);
+            silverGenerateMesh(meshType, meshQuality, density,width,height, out mesh);
 
             Mesh finalMesh = SilverMeshToUnityMesh(mesh);
 
