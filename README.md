@@ -3,7 +3,7 @@
 [![](https://img.shields.io/badge/Powered%20by-vrviu.com-brightgreen.svg)](https://vrviu.com)
 
 ## 版本历史
- 20180712 V2.1 优化性能，底层库修改，增加巨幕支持接口；  
+ 20180726 V2.1 优化性能，底层库修改，增加巨幕支持接口；  
  20180712 V2.0 优化性能，支持设置vid播放，支持多UI图层；  
  20180607 V1.3 支持8K VR点播视频播放；  
  20180514 V1.2 优化SDK，避免了目前多数VR播放SDK由于渲染不当造成的眩晕感；  
