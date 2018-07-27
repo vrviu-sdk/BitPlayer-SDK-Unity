@@ -6,8 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/VRVIUBitVR/Demo/Scenes/Lobby.unity
+    path: Assets/VRVIUBitVRSample/BitDemo/Scenes/BitLobby.unity
     guid: eb529c3b059d1a94cbdb4d66ccb1c5c8
   - enabled: 1
-    path: Assets/VRVIUBitVR/Demo/Scenes/Video.unity
+    path: Assets/VRVIUBitVRSample/BitDemo/Scenes/BitVideo.unity
     guid: 3ed0aec8d949d1648a9eb8a9d30e6cdc

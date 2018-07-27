@@ -305,7 +305,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
                 return;
             }
           
-            defaultMesh = SilverPlayer.GenerateMesh(meshType, meshQuality, density,20 ,20);
+            defaultMesh = SilverPlayer.GenerateMesh(meshType, meshQuality, density,1 ,1);
             
             if (!string.IsNullOrEmpty(m_mesh_url) && format != VideoFormat.OPT_FLAT_MONO &&
                     format != VideoFormat.OPT_FLAT_LR && format != VideoFormat.OPT_FLAT_TB)
