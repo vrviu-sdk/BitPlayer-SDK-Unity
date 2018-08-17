@@ -8,7 +8,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
     using System.Collections.Generic;
     using System.IO;
     using VRVIU.BitVRPlayer.BitVideo;
-    using VRVIU.BitVRPlayer.BitVideo.Silver;
+    using System.Text;
 
     public class SilverMediaPlayerCtrl : MonoBehaviour
     {
@@ -41,7 +41,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         private string m_meshUrl;
         private string m_filterVersion;
         public SetViewerFormat m_ViewerFormatScript = null;
-        public GameObject[] m_TargetMaterial = null;
+        //public GameObject[] m_TargetMaterial = null;
 
         private Texture2D[] m_VideoTexture = null;
         private PLAYER_STATE m_CurrentState = new PLAYER_STATE();
@@ -222,14 +222,14 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         // switch back to the other mesh quickly.
         private void saveDefaultMesh()
         {
-            m_defaultMesh = new Mesh[m_TargetMaterial.Length];
+            m_defaultMesh = new Mesh[GetTargetMaterial().Length];
 
-            for (int i = 0; i < m_TargetMaterial.Length; i++)
+            for (int i = 0; i < GetTargetMaterial().Length; i++)
             {
                 m_defaultMesh[i] = null;
-                if (m_TargetMaterial[i] != null)
+                if (GetTargetMaterial()[i] != null)
                 {
-                    MeshFilter meshFilter = m_TargetMaterial[i].GetComponent<MeshFilter>();
+                    MeshFilter meshFilter = GetTargetMaterial()[i].GetComponent<MeshFilter>();
                     if (meshFilter)
                     {
                         m_defaultMesh[i] = meshFilter.mesh;
@@ -238,15 +238,22 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             }
         }
 
+
+        private MeshFilter[] GetTargetMaterial() {
+            if (m_ViewerFormatScript == null) {
+                return null;
+            }
+            return m_ViewerFormatScript.GetTargetMaterial() ;
+        }
         //-------------------------------------------------------------------------
         // Restore default mesh, if no mesh file was specified.
         private void setDefaultMesh()
         {
-            for (int i = 0; i < m_TargetMaterial.Length; i++)
+            for (int i = 0; i < GetTargetMaterial().Length; i++)
             {
-                if (m_TargetMaterial[i] != null)
+                if (GetTargetMaterial()[i] != null)
                 {
-                    MeshFilter meshFilter = m_TargetMaterial[i].GetComponent<MeshFilter>();
+                    MeshFilter meshFilter = GetTargetMaterial()[i].GetComponent<MeshFilter>();
                     if (meshFilter)
                     {
                         meshFilter.mesh = m_defaultMesh[i];
@@ -258,11 +265,11 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         //-------------------------------------------------------------------------
         private void setMesh(Mesh mesh)
         {
-            for (int i = 0; i < m_TargetMaterial.Length; i++)
+            for (int i = 0; i < GetTargetMaterial().Length; i++)
             {
-                if (m_TargetMaterial[i] != null)
+                if (GetTargetMaterial()[i] != null)
                 {
-                    MeshFilter meshFilter = m_TargetMaterial[i].GetComponent<MeshFilter>();
+                    MeshFilter meshFilter = GetTargetMaterial()[i].GetComponent<MeshFilter>();
                     if (meshFilter)
                     {
                         meshFilter.mesh = mesh;
@@ -314,11 +321,11 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                     return false;
                 }
             }
-            for (int i = 0; i < m_TargetMaterial.Length; i++)
+            for (int i = 0; i < GetTargetMaterial().Length; i++)
             {
-                if (m_TargetMaterial[i] != null)
+                if (GetTargetMaterial()[i] != null)
                 {
-                    MeshFilter meshFilter = m_TargetMaterial[i].GetComponent<MeshFilter>();
+                    MeshFilter meshFilter = GetTargetMaterial()[i].GetComponent<MeshFilter>();
                     if (meshFilter == null)
                     {
                         throw new System.Exception("Object did not contain meshFilter");
@@ -338,11 +345,11 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         //-------------------------------------------------------------------------
         private void setMaterialOrientation(Vector3 currentOrientation)
         {
-            for (int i = 0; i < m_TargetMaterial.Length; i++)
+            for (int i = 0; i < GetTargetMaterial().Length; i++)
             {
-                if (m_TargetMaterial[i])
+                if (GetTargetMaterial()[i])
                 {
-                    m_TargetMaterial[i].transform.localEulerAngles = currentOrientation;
+                    GetTargetMaterial()[i].transform.localEulerAngles = currentOrientation;
                 }
             }
         }
@@ -404,14 +411,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                     case MEDIAPLAYER_STATE.END:
                         if (OnEnd != null)
                         {
-                            Call_Play();
+                            OnEnd();
                         }
-
-                        /*             if (m_bLoop == true)
-                                     {
-                                         Call_Play();
-                                     }
-                                     */
                         break;
                     //-----------------------------
                     case MEDIAPLAYER_STATE.ERROR:
@@ -468,7 +469,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                 }
                 else if (!string.IsNullOrEmpty(m_videoInfo))
                 {
-                    Call_SetVideoInfo(m_videoInfo, m_videoInfo.Length);
+                    int len = Encoding.UTF8.GetByteCount(m_videoInfo);
+                    Call_SetVideoInfo(m_videoInfo, len);
                     m_bInitializedMoviePlayback = true;
                 }
                 UnityEngine.XR.InputTracking.Recenter();
@@ -622,7 +624,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                             // it's mesh stays on forward orientation.
                             //*NOTE* The default mesh does not orient at 0,0,0 for forward direction being center of the image.
                             // So we have to force it to -90 degrees. THIS IS UNEXPECTED.
-                            Vector3 zeroOrientation = new Vector3(0, -90, 0);
+                            Vector3 zeroOrientation = new Vector3(0, 0, 0);
                             setMaterialOrientation(zeroOrientation);
                         }
                        
@@ -633,7 +635,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                         m_DebugObject.transform.rotation = Camera.main.transform.rotation;
                         m_DebugTextObject.text = "Head orientation:" + m_headOrientation + "\n" +
                                                  "View orientation:" + m_viewOrientation + "\n" +
-                                                 "Mesh orientation:" + m_TargetMaterial[0].transform.localEulerAngles + "\n" +
+                                                 "Mesh orientation:" + GetTargetMaterial()[0].transform.localEulerAngles + "\n" +
                                                  "Mesh rotate     :"+ rotateMesh+
                                                  string.Format("State Timestamp: {0,9:##0.000000}\n", (double)m_CurrentState.lTimestamp / 1e6) +
                                                  string.Format("Tex   Timestamp: {0,9:##0.000000}\n", (double)m_lTextureTimestamp / 1e6);
@@ -845,6 +847,9 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         void OnDestroy()
         {
             Debug.Log("SilverMediaPlayerCtrl OnDestroy");
+            if (m_ViewerFormatScript != null) {
+                m_ViewerFormatScript.Release();
+            }
             Call_UnLoad();
         }
 
@@ -1174,11 +1179,11 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                 }
 
                 bool bMaterialChanged = false;
-                for (int i = 0; i < m_TargetMaterial.Length; i++)
+                for (int i = 0; i < GetTargetMaterial().Length; i++)
                 {
-                    if (m_TargetMaterial[i])
+                    if (GetTargetMaterial()[i])
                     {
-                        MeshRenderer Renderer = m_TargetMaterial[i].GetComponent<MeshRenderer>();
+                        MeshRenderer Renderer = GetTargetMaterial()[i].GetComponent<MeshRenderer>();
                         if (Renderer != null)
                         {
                             if (Renderer.material.mainTexture != m_VideoTexture[0])
@@ -1220,7 +1225,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                             }
                         }
 
-                        RawImage Image = m_TargetMaterial[i].GetComponent<RawImage>();
+                        RawImage Image = GetTargetMaterial()[i].GetComponent<RawImage>();
                         if (Image != null)
                         {
                             if (Image.texture != m_VideoTexture[0])
@@ -1263,7 +1268,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         }
 
         private void Call_SetReplay(int count) {
-            m_replayCount = count;
+            m_Player.SetReplay(count);
         }
         private long Call_GetSeekPosition()
         {
@@ -1387,9 +1392,11 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                 case SilverPlayer.SILVER_STATE.SILVER_STATE_IDLE: ResultingState.eState = MEDIAPLAYER_STATE.INITIALIZED; break;
                 case SilverPlayer.SILVER_STATE.SILVER_STATE_PREPARING: ResultingState.eState = MEDIAPLAYER_STATE.PREPARING; break;
                 case SilverPlayer.SILVER_STATE.SILVER_STATE_READY: ResultingState.eState = MEDIAPLAYER_STATE.READY; break;
-                case SilverPlayer.SILVER_STATE.SILVER_STATE_BUFFERING: ResultingState.eState = MEDIAPLAYER_STATE.PLAYING; break;
+                case SilverPlayer.SILVER_STATE.SILVER_STATE_BUFFERING: ResultingState.eState = MEDIAPLAYER_STATE.BUFFERING; break;
                 case SilverPlayer.SILVER_STATE.SILVER_STATE_PLAYING: ResultingState.eState = MEDIAPLAYER_STATE.PLAYING; break;
+                case SilverPlayer.SILVER_STATE.SILVER_STATE_PAUSE:  ResultingState.eState = MEDIAPLAYER_STATE.PAUSED;break;
                 case SilverPlayer.SILVER_STATE.SILVER_STATE_ERROR: ResultingState.eState = MEDIAPLAYER_STATE.ERROR; break;
+                case SilverPlayer.SILVER_STATE.SILVER_STATE_END: ResultingState.eState = MEDIAPLAYER_STATE.END; break;
                 default: ResultingState.eState = MEDIAPLAYER_STATE.NOT_READY; break;
             }
             switch (VideoInfo.sourceFormat)

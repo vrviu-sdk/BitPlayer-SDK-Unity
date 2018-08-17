@@ -1,6 +1,5 @@
 ﻿//-----------------------------------------------------
-//            VRVIU: Silver180-Unity-SDK
-//            Author: hogan.yin@vrviu.com  
+//            Author: kevin.zha@vrviu.com  
 // Copyright © 2016-2017 VRVIU Technologies Limited. 
 //-----------------------------------------------------
 namespace VRVIU.BitVRPlayer.BitVideo

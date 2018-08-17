@@ -60,7 +60,7 @@ namespace Demo.Video
 
         public VRCtrl vrCtrl;
 
-        private VideoData data;
+        private VideoInfo data;
 
         private Account account;
         private Coroutine showOperationCoroutine;
@@ -83,8 +83,14 @@ namespace Demo.Video
             RegisterEvents();
             data = BitLobby.videoData;
             account = BitLobby.account;
-
-            player.SetupPlayer(data, account);
+            if (string.IsNullOrEmpty(data.vid) && !string.IsNullOrEmpty(data.url))
+            {
+                player.SetLocalVideoInfo(data.url,data.projection, data.stereo,data.hfov, account);
+            }
+            else {
+                player.SetVid(data.vid,data.format, account);
+            }
+            
             player.SetReplay(-1);
             seekBarAdjuster.player = player;
             isLoading = true;
@@ -124,8 +130,6 @@ namespace Demo.Video
             {
                 this.OnClick(exitVRButton.gameObject);
             });
-
-            player.OnReady += OnReady;
             player.OnVideoFirstFrameReady += OnVideoFirstFrameReady;
         }
 
@@ -185,7 +189,6 @@ namespace Demo.Video
 
         private void OnDestroy()
         {
-            player.OnReady -= OnReady;
             player.OnVideoFirstFrameReady -= OnVideoFirstFrameReady;
             player.Release();
         }
@@ -244,7 +247,7 @@ namespace Demo.Video
             }
         }
 
-        private void Reload(VideoData videoData)
+        private void Reload(VideoInfo videoData)
         {
             player.Release();
 
@@ -318,9 +321,8 @@ namespace Demo.Video
         {
             
             eventButton.interactable = true;
-            nameText.text = data.name;
-            bitrateText.text = data.bitrate;
-            //loadingImage.gameObject.SetActive(false);
+            nameText.text = data.title;
+             
             vrButton.gameObject.SetActive(true);
 
             nameText.gameObject.SetActive(true);

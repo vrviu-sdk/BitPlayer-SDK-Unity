@@ -3,32 +3,36 @@
 //            Author: kevin.zha@vrviu.com  
 // Copyright © 2016-2018 VRVIU Technologies Limited. 
 //-----------------------------------------------------
-
-using VRVIU.BitVRPlayer.BitVideo;
-
-namespace VRVIU.BitVRPlayer.BitData
-{
-
-    public class VideoData
+using System;
+using System.Collections.Generic;
+[Serializable]
+public class VideoInfo
     {
-        public string name;
-
-        public VideoFormat format;
-
-        public string description;
+        public string vid;
 
         public string url;
-        
-        public string thumbnail;
-        
-        public int algorithmType;
+
+        public string cover_url;
+
+        public int format;
+
+        public string title;
+
+        public string desc;
 
         public int duration;
 
-        public string bitrate;
+        public int isLocal = 0;//0:服务端，1：本地
+         
+        public int vaid;
+        
+        public int hfov;  //180或者360
 
-        public string meshUrl;
+        public int stereo; //0：未知；1：2D；2：3D左右；3：3D上下；4：3D右左；5：3D下上
 
-        public string videoInfo;
+        public int projection; //0：未知；1：ERP；2：FISHEYE；3：TROPIZED；4：FLAT
     }
-}
+[Serializable]
+public class VideoList {
+        public List<VideoInfo> array;
+    }
