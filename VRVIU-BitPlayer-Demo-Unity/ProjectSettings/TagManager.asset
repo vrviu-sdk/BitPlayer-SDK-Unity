@@ -4,13 +4,9 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - video 6
-  - video 3
-  - video 4
+  - ERP Video
+  - FE Video
   - Exit
-  - video 1
-  - video 2
-  - video 5
   layers:
   - Default
   - TransparentFX
@@ -20,9 +16,9 @@ TagManager:
   - UI
   - 
   - 
-  - LeftEye
   - RightEye
-  - Both
+  - LeftEye
+  - BothEye
   - 
   - 
   - 

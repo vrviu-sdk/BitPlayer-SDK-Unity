@@ -180,7 +180,7 @@ public class BitLobby : MonoBehaviour {
             vi1.stereo = 1;
             vi1.projection = 1;
             vi1.vid = null;
-            vi1.url = "/sdcard/Movies/viuvideos/Mariachi_3d_no_logo.vr1";
+            vi1.url = "/sdcard/Movies/viuvideos/Boxing3.vr1";
             vi1.vaid = (int)DefineType.TYPE2;
             videoData = vi1;
             SceneManager.LoadScene("BitVideo");
