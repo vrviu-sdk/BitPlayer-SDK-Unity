@@ -34,8 +34,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         private const float LEFT_RIGHT_OFFSET_Y = 0.0f;
 
         // reversed upper and lower since image is rendered inverted
-        private const float UPPER_TEXTURE_OFFSET = 0.5f;
-        private const float LOWER_TEXTURE_OFFSET = 0.0f;
+        private const float UPPER_TEXTURE_OFFSET = 0.0f;
+        private const float LOWER_TEXTURE_OFFSET = 0.5f;
 
         private const float LEFT_TEXTURE_OFFSET = 0.0f;
         private const float RIGHT_TEXTURE_OFFSET = 0.5f;
@@ -45,8 +45,14 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         private GameObject rightEyeCamera;
         private Camera rightEyeCameraComponent;
 
+        private Renderer rightEyeImageRenderer;
+        private Renderer leftEyeImageRenderer;
+
+        private MeshFilter rightEyeImageFilter;
+        private MeshFilter leftEyeImageFilter;
         public void OnEnable()
         {
+            Debug.Log("SilverFormat OnEnable");
             VideoFormater formatter = FindObjectOfType< VideoFormater>();
 
             if (formatter)
@@ -115,7 +121,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                     // set left camera component to display to left eye only
                     leftEyeCameraComponent.stereoTargetEye = StereoTargetEyeMask.Left;
                     // set left camera to only show left eye layer display
-                    leftEyeCameraComponent.cullingMask = LEFT_EYE_LAYER_MASK;
+                    leftEyeCameraComponent.cullingMask = LEFT_EYE_LAYER_MASK + UI_LAYER_MASK;
                     leftEyeCameraComponent.stereoSeparation = 0;
                 }
 
@@ -128,7 +134,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                     // set right camera component to display to right eye only
                     rightEyeCameraComponent.stereoTargetEye = StereoTargetEyeMask.Right;
                     // set right camera to only show right eye layer display
-                    rightEyeCameraComponent.cullingMask = RIGHT_EYE_LAYER_MASK;
+                    rightEyeCameraComponent.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK;
                     rightEyeCameraComponent.stereoSeparation = 0;
                 }
 
@@ -199,8 +205,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             // get left eye image sphere
             GameObject leftEyeImageSphere = GameObject.Find(LEFT_EYE_IMAGE_SPHERE_NAME);
             // get left eye mesh renderer
-            Renderer leftEyeImageRenderer = leftEyeImageSphere.GetComponent<MeshRenderer>();
-
+            leftEyeImageRenderer = leftEyeImageSphere.GetComponent<MeshRenderer>();
+            leftEyeImageFilter = leftEyeImageSphere.GetComponent<MeshFilter>();
             // load default material for left eye
             Material leftMat = (Material)Instantiate(leftEyeImageRenderer.material);
             // duplicate material for right eye
@@ -220,14 +226,55 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             // get right eye image sphere
             GameObject rightEyeImageSphere = GameObject.Find(RIGHT_EYE_IMAGE_SPHERE_NAME);
             // get right eye mesh renderer
-            Renderer rightEyeImageRenderer = rightEyeImageSphere.GetComponent<MeshRenderer>();
+            rightEyeImageRenderer = rightEyeImageSphere.GetComponent<MeshRenderer>();
+            rightEyeImageFilter = rightEyeImageSphere.GetComponent<MeshFilter>();
             // set material for right eye image rendering
             rightEyeImageRenderer.material = rightMat;
+        }
+
+        public MeshFilter[] GetTargetMaterial (){
+            MeshFilter[] material = new MeshFilter[2];
+            material[0] = leftEyeImageFilter;
+            material[1] = rightEyeImageFilter;
+            return material;
+        }
+
+        public void Release() {
+            UnloadMesh();
+            UnloadMaterial();
+        }
+        private void UnloadMesh()
+        {
+            if (leftEyeImageFilter != null && leftEyeImageFilter.mesh != null)
+            {
+                GameObject.Destroy(leftEyeImageFilter.mesh);
+                leftEyeImageFilter.mesh = null;
+            }
+
+            if (rightEyeImageFilter != null && rightEyeImageFilter.mesh != null)
+            {
+                GameObject.Destroy(rightEyeImageFilter.mesh);
+                rightEyeImageFilter.mesh = null;
+            }
+        }
+
+        private void UnloadMaterial()
+        {
+            if (leftEyeImageRenderer != null && leftEyeImageRenderer.material != null)
+            {
+                GameObject.Destroy(leftEyeImageRenderer.material);
+            }
+
+            if (rightEyeImageRenderer != null && rightEyeImageRenderer.material != null)
+            {
+                GameObject.Destroy(rightEyeImageRenderer.material);
+            }
         }
 
         // Use this for initialization
         void Start()
         {
+            Debug.Log("SilverFormat Start");
             SetUpViewerFormat();
         }
 

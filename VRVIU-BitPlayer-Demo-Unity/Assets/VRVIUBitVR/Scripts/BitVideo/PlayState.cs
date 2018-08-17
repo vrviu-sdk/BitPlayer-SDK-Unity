@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace VRVIU.BitVRPlayer.BitVideo
+namespace VRVIU.BitVRPlayer.BitVideo 
 {
     public enum MEDIAPLAYER_STATE
     {
@@ -15,6 +15,9 @@ namespace VRVIU.BitVRPlayer.BitVideo
         PAUSED = 5,
         STOPPED = 6,
         ERROR = 7,
-        END = 8
+        END = 8,
+        SEEKING = 9,
+        FIRSTFRAME = 10,
+        BUFFERING = 11
     }
 }

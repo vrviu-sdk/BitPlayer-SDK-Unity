@@ -10,7 +10,6 @@ using UnityEngine.SceneManagement;
 using UnityEngine.XR;
 using UnityEngine.UI;
 using VRVIU.BitVRPlayer.BitData;
-using VRVIU.BitVRPlayer.BitVideo;
 using VRVIU.BitVRPlayer.BitVRPlayer.BitData;
 
 public class BitLobby : MonoBehaviour {
@@ -32,7 +31,7 @@ public class BitLobby : MonoBehaviour {
     private bool isTriggerOnNew = false; 
     private RaycastHit prevHit;
     public static Account account = new Account();
-    public static VideoData videoData = new VideoData();
+    public static VideoInfo videoData = new VideoInfo();
     private static int backTimes = 0;
     // Use this for initialization
     void Start () {
@@ -40,6 +39,11 @@ public class BitLobby : MonoBehaviour {
         Screen.orientation = ScreenOrientation.LandscapeLeft;
         Screen.autorotateToLandscapeLeft = false;
         Screen.autorotateToLandscapeRight = false;
+        /*List<string> paths = new List<string>();
+        paths.Add("/sdcard/Movies/viuvideos/");
+        FileManager.getInstance().GetLocalFileList(paths);
+        FileManager.getInstance().GetLocalFileVideoInfo("/sdcard/Movies/viuvideos/Boxing_2d_default.vr1");*/
+    
     }
 	
 	// Update is called once per frame
@@ -154,20 +158,31 @@ public class BitLobby : MonoBehaviour {
         account.bizId = "altsdk_alpha";
         account.accessKey = "a2fe8f5e4767e6c3dca8beb9b410f17a";
         account.accessKeyId = "dcb0af5f194f410796452a1644132f03";
-       
+
         if (tag.CompareTag("video 1"))
         {
-            videoData.name = "test";
-            videoData.format = VideoFormat.OPT_ERP_180_LR;
-            videoData.url = "http://viuencv-in.oss-cn-shenzhen.aliyuncs.com/outvideo/video001.mp4";
-            videoData.algorithmType = (int)Algorithm.ERP;
+            VideoInfo vi = new VideoInfo();
+            vi.title = "test";
+            vi.hfov = 180;
+            vi.stereo = 1;
+            vi.projection = 1;
+            vi.vid = null;
+            vi.url = "/sdcard/Movies/viuvideos/Boxing_2d_default.vr1";
+            vi.format = 5;
+            vi.vaid = (int)DefineType.TYPE1;
+            videoData = vi;
             SceneManager.LoadScene("BitVideo");
         }
         else if (tag.CompareTag("video 2"))
         {
-            videoData.format = VideoFormat.OPT_ERP_360_MONO;
-            videoData.url = "http://viuencv-in.oss-cn-shenzhen.aliyuncs.com/mvm/2D_360_4k_t-10s/2D_360_4k_t-10s_video.hls";
-            videoData.algorithmType = (int)Algorithm.P4;
+            VideoInfo vi1 = new VideoInfo();
+            vi1.hfov = 180;
+            vi1.stereo = 1;
+            vi1.projection = 1;
+            vi1.vid = null;
+            vi1.url = "/sdcard/Movies/viuvideos/Mariachi_3d_no_logo.vr1";
+            vi1.vaid = (int)DefineType.TYPE2;
+            videoData = vi1;
             SceneManager.LoadScene("BitVideo");
         }
         else if (tag.CompareTag("Exit")) {

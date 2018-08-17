@@ -511,6 +511,11 @@ public class BitPlayerTexture : MonoBehaviour
                         Call_Play(0);
                     }
                 }
+                else if (m_CurrentState == MEDIAPLAYER_STATE.FIRSTFRAME) {
+                    if (OnVideoFirstFrameReady != null) {
+                        OnVideoFirstFrameReady();
+                    }
+                }
                 else if (m_CurrentState == MEDIAPLAYER_STATE.ERROR)
                 {
                     OnError(Call_GetError(), Call_GetErrorExtra());
@@ -865,10 +870,6 @@ public class BitPlayerTexture : MonoBehaviour
         
         void OnDestroy()
         {
-
-#if UNITY_ANDROID
-         //   Call_Reset();
-#endif
             Call_UnLoad();
 
             DeleteVideoTexture();
@@ -1114,9 +1115,6 @@ public class BitPlayerTexture : MonoBehaviour
         public void UnLoad()
         {
             m_bCheckFBO = false;
-#if UNITY_ANDROID
-            //Call_Reset();
-#endif
             Call_UnLoad();
             m_CurrentState = MEDIAPLAYER_STATE.NOT_READY;
         }
@@ -3041,7 +3039,7 @@ public class BitPlayerTexture : MonoBehaviour
 
             bSeekTo = true;
             iInitCount = 0;
-
+            m_CurrentState = MEDIAPLAYER_STATE.SEEKING;
 
             long seek_target = (long)iSeek * 1000;
 
@@ -3075,6 +3073,7 @@ public class BitPlayerTexture : MonoBehaviour
             audioClip = null;
             
             ffmpeg.avcodec_flush_buffers(pCodecContext);
+            m_CurrentState = MEDIAPLAYER_STATE.PLAYING;
         }
 
         private int Call_GetSeekPosition()

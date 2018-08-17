@@ -4,7 +4,7 @@
 namespace VRVIU.BitVRPlayer.BitVideo
 {
     using UnityEngine;
-    using  VRVIU.BitVRPlayer.BitVideo.Silver;
+    using VRVIU.BitVRPlayer.BitVideo.Silver;
 
     [DisallowMultipleComponent]
     public sealed class VideoFormater : MonoBehaviour
@@ -76,9 +76,9 @@ namespace VRVIU.BitVRPlayer.BitVideo
 
                     //Switch();
                 }
-               
+
             }
-        }        
+        }
 
         /// <summary>
         /// Left eye camera component
@@ -94,8 +94,9 @@ namespace VRVIU.BitVRPlayer.BitVideo
         private GameObject rightEyeCameraObject = null;
         #endregion
 
-        private void Awake()
+        public void SetUp()
         {
+            Debug.Log("VideoFormater Awake");
             if (leftSide != null)
             {
                 leftSideMeshFilter = leftSide.GetComponent<MeshFilter>();
@@ -108,6 +109,14 @@ namespace VRVIU.BitVRPlayer.BitVideo
 
                 rightSideMeshFilter = rightSide.GetComponent<MeshFilter>();
                 rightSideMeshRenderer = rightSide.GetComponent<MeshRenderer>();
+            }
+            if(leftSide != null)
+            {
+                leftSide.GetComponent<MeshRenderer>().material.shader =Shader.Find("VRVIU/Unlit_SphereInside");
+            }
+
+            if (rightSide != null) {
+                rightSide.GetComponent<MeshRenderer>().material.shader = Shader.Find("VRVIU/Unlit_SphereInside");
             }
 
             BindPlayer();
@@ -141,16 +150,11 @@ namespace VRVIU.BitVRPlayer.BitVideo
         // Use this for initialization
         void Start()
         {
-           
-            //Switch();
-
+            Debug.Log("VideoFormater start");
         }
 
-		public void init(){
-			
-		}
-
-        private void OnDestroy()
+  
+        public void Release()
         {
             UnbindPlayer();
 
@@ -159,11 +163,13 @@ namespace VRVIU.BitVRPlayer.BitVideo
             UnloadMaterial();
         }
 
-        public MeshFilter GetLeftMesh() {
+        public MeshFilter GetLeftMesh()
+        {
             return leftSideMeshFilter;
         }
 
-        public MeshFilter GetRightMesh() {
+        public MeshFilter GetRightMesh()
+        {
             return rightSideMeshFilter;
         }
 
@@ -179,7 +185,8 @@ namespace VRVIU.BitVRPlayer.BitVideo
             Switch();
         }
 
-        public void SetMeshUrl(string url) {
+        public void SetMeshUrl(string url)
+        {
             m_mesh_url = url;
             Switch();
         }
@@ -190,10 +197,10 @@ namespace VRVIU.BitVRPlayer.BitVideo
         private void Switch()
         {
             #region Ajust camera settings.
-            int LEFT_EYE_LAYER_MASK  = (1 << LayerMask.NameToLayer(LEFT_EYE_LAYER_NAME))  | (1 << 0);
+            int LEFT_EYE_LAYER_MASK = (1 << LayerMask.NameToLayer(LEFT_EYE_LAYER_NAME)) | (1 << 0);
             int RIGHT_EYE_LAYER_MASK = (1 << LayerMask.NameToLayer(RIGHT_EYE_LAYER_NAME)) | (1 << 0);
-            int UI_LAYER_MASK =  (1 << LayerMask.NameToLayer(UI_LAYER_NAME)) | (1 << 0);
-            Debug.Log("video format switch "+ format);
+            int UI_LAYER_MASK = (1 << LayerMask.NameToLayer(UI_LAYER_NAME)) | (1 << 0);
+            Debug.Log("video format switch " + format);
             // Monoscopic
             if (format == VideoFormat.OPT_FLAT_MONO || format == VideoFormat.OPT_ERP_180_MONO || format == VideoFormat.OPT_ERP_360_MONO
                 || format == VideoFormat.OPT_FISHEYE_MONO || format == VideoFormat.OPT_TROPIZED_MONO)
@@ -219,7 +226,9 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     rightEyeCamera.gameObject.SetActive(true);
                     // Set left camera component to display both eyes
                     rightEyeCamera.stereoTargetEye = StereoTargetEyeMask.Both;
-                    rightEyeCamera.cullingMask = LEFT_EYE_LAYER_MASK + UI_LAYER_MASK;
+                    rightEyeCamera.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK;
+                    rightSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", Vector2.one);
+                    rightSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", Vector2.zero);
                 }
 
             }
@@ -233,7 +242,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     // Set left camera component to display to left eye only
                     leftEyeCamera.stereoTargetEye = StereoTargetEyeMask.Left;
                     // Set left camera to only show left eye layer display
-                    leftEyeCamera.cullingMask = RIGHT_EYE_LAYER_MASK+UI_LAYER_MASK;
+                    leftEyeCamera.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK;
 
                     if (format == VideoFormat.OPT_ERP_180_LR || format == VideoFormat.OPT_ERP_360_LR || format == VideoFormat.OPT_FLAT_LR
                         || format == VideoFormat.OPT_FISHEYE_LR || format == VideoFormat.OPT_TROPIZED_LR)
@@ -243,8 +252,8 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     }
                     else
                     {
-                        leftSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", new Vector2(0.5f, 1.0f));
-                        leftSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(0.0f, 0.5f));
+                        leftSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", new Vector2(1.0f, 0.5f));
+                        leftSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", Vector2.zero);
                     }
                 }
 
@@ -257,16 +266,16 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     // Set right camera to only show right eye layer display
                     rightEyeCamera.cullingMask = LEFT_EYE_LAYER_MASK + UI_LAYER_MASK;
 
-                    if (format == VideoFormat.OPT_ERP_180_TB || format == VideoFormat.OPT_ERP_360_TB || format == VideoFormat.OPT_FLAT_TB 
-                        || format == VideoFormat.OPT_FISHEYE_TB || format == VideoFormat.OPT_TROPIZED_TB)
+                    if (format == VideoFormat.OPT_ERP_180_LR || format == VideoFormat.OPT_ERP_360_LR || format == VideoFormat.OPT_FLAT_LR
+                        || format == VideoFormat.OPT_FISHEYE_LR || format == VideoFormat.OPT_TROPIZED_LR)
                     {
                         rightSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", new Vector2(0.5f, 1.0f));
                         rightSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", Vector2.zero);
                     }
                     else
                     {
-                        rightSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", new Vector2(0.5f, 1.0f));
-                        rightSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", Vector2.zero);
+                        rightSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", new Vector2(1.0f, 0.5f));
+                        rightSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(0.0f, 0.5f));
                     }
                 }
             }
@@ -280,7 +289,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             SilverPlayer.MeshQuality meshQuality = SilverPlayer.MeshQuality.eQ1;
             float density = 0.5f;
 
-            if (format == VideoFormat.OPT_FISHEYE_TB || format == VideoFormat.OPT_FISHEYE_LR)
+            if (format == VideoFormat.OPT_FISHEYE_MONO || format == VideoFormat.OPT_FISHEYE_TB || format == VideoFormat.OPT_FISHEYE_LR)
             {
                 meshType = SilverPlayer.MeshType.eMeshTypeFisheye180;
             }
@@ -296,7 +305,8 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 //meshType = SilverPlayer.MeshType.eMeshTypeTropized;
             }
-            else if (format == VideoFormat.OPT_FLAT_MONO || format == VideoFormat.OPT_FLAT_LR || format == VideoFormat.OPT_FLAT_TB) {
+            else if (format == VideoFormat.OPT_FLAT_MONO || format == VideoFormat.OPT_FLAT_LR || format == VideoFormat.OPT_FLAT_TB)
+            {
                 meshType = SilverPlayer.MeshType.eMeshTypePlane;
             }
             else
@@ -304,9 +314,9 @@ namespace VRVIU.BitVRPlayer.BitVideo
                 Debug.LogError("ERROR: unknown video format input.");
                 return;
             }
-          
-            defaultMesh = SilverPlayer.GenerateMesh(meshType, meshQuality, density,1 ,1);
-            
+
+            defaultMesh = SilverPlayer.GenerateMesh(meshType, meshQuality, density, 1, 1);
+
             if (!string.IsNullOrEmpty(m_mesh_url) && format != VideoFormat.OPT_FLAT_MONO &&
                     format != VideoFormat.OPT_FLAT_LR && format != VideoFormat.OPT_FLAT_TB)
             {
@@ -323,10 +333,10 @@ namespace VRVIU.BitVRPlayer.BitVideo
                 rightSideMeshFilter.mesh = defaultMesh;
             }
             //}
-           // else {
+            // else {
 
             //}
-           
+
             #endregion
         }
 
@@ -363,17 +373,18 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     Debug.Log("New mesh imported from " + meshURL);
                     if (newMesh == null)
                     {
-                        Debug.LogError("Unable to parse mesh at URL " + meshURL);
+                        Debug.LogError("Unable to parse mesh at URL " + meshURL + " error " + meshFile.error);
                         return newMesh;
                     }
                 }
                 else
                 {
-                    Debug.LogError("Unable to retrieve mesh URL " + meshURL);
+                    Debug.LogError("Unable to retrieve mesh URL " + meshURL + " error " + meshFile.error);
                     return newMesh;
                 }
             }
-            if (newMesh != null) {
+            if (newMesh != null)
+            {
                 Debug.Log("Download a new mesh URL " + meshURL);
             }
             return newMesh;
@@ -385,21 +396,21 @@ namespace VRVIU.BitVRPlayer.BitVideo
         private void BindPlayer()
         {
             player = gameObject.GetComponent<BitVideoPlayer>();
-            player.OnResize += OnResize;
+            player.OnVideoResize += OnResize;
         }
 
         private void UnbindPlayer()
         {
             if (player != null)
             {
-                player.OnResize -= OnResize;
+                player.OnVideoResize -= OnResize;
 
                 player = null;
             }
         }
 
         private void UnloadMesh()
-		{
+        {
             if (leftSideMeshFilter != null && leftSideMeshFilter.mesh != null)
             {
                 GameObject.Destroy(leftSideMeshFilter.mesh);

@@ -144,6 +144,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             SILVER_STATE_READY,
             SILVER_STATE_BUFFERING,
             SILVER_STATE_PLAYING,
+            SILVER_STATE_PAUSE,
             SILVER_STATE_ERROR,
             SILVER_STATE_END,
             SILVER_STATE_COMPLETE
@@ -807,8 +808,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             }
 
             // Only trapezoid, or any P4 style mesh requires rotation
-            rotateMesh = (textureInfo.videoType == (int)SilverVideoType.eSilverMeshForm);
-
+            rotateMesh = (textureInfo.videoType == (int)SilverVideoType.eSilverMeshForm) ||
+                (textureInfo.videoType == (int)SilverVideoType.eSilverMultiViewMapping);
             double afterPluginEvent = Time.realtimeSinceStartup;
             double afterSetup = Time.realtimeSinceStartup;
 
