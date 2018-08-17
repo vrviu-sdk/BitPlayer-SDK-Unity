@@ -140,7 +140,7 @@ player.Release();
 ```
 
 ##### 7.11获取清晰度列表
-public List<Format> GetResolution()
+player.GetResolution()
 
 ### 8. 检查混淆
 ```proguard
