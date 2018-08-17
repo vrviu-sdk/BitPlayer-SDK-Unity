@@ -139,6 +139,9 @@ player.GetPlayState();
 player.Release();
 ```
 
+##### 7.11获取清晰度列表
+public List<Format> GetResolution()
+
 ### 8. 检查混淆
 ```proguard
 -keep class com.viu.player.** { *; } 
