@@ -39,6 +39,9 @@ namespace Assets.VRVIUBitVR.Utils
         [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
         private static extern SILVER_ERROR silverExtractVr1SubFile(String pVr1Path, String pFileName, String pDstPath);
 
+        [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
+        private static extern SILVER_ERROR silverGetVr1RootDirectory(String pVr1Path, StringBuilder desc, int rootDirBufSize);
+
         public static FileManager getInstance()
         {
             if (instance == null)
@@ -83,10 +86,14 @@ namespace Assets.VRVIUBitVR.Utils
 #endif
             if (videoInfo != null)
             {
+
+                StringBuilder videoPath = new StringBuilder(256);
+                silverGetVr1RootDirectory(filePath, videoPath, 256);
+
                 if (!string.IsNullOrEmpty(videoInfo.url) &&
                 !videoInfo.url.Contains("https") && !videoInfo.url.Contains("http"))
                 {
-                    videoInfo.url = "http://localhost:7777/vr1/" + filePath + "@" + tmp + "/" + videoInfo.url;
+                    videoInfo.url = "http://localhost:7777/vr1/" + filePath + "@" + videoPath + "/" + videoInfo.url;
                 }
                 videoInfo.isLocal = 1;
             }
