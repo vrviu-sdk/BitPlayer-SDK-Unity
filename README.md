@@ -139,13 +139,44 @@ player.GetPlayState();
 player.Release();
 ```
 
-##### 7.11获取清晰度列表
+##### 7.11获取清晰度列表  
 player.GetResolution()
+
+##### 7.12 设置本地视频信息  
+public void SetLocalVideoInfo(string url, int projection, int stereo, int hfov, Account account)；  
+/**
+ * url:			指定的vr1或者mp4文件路径
+ * projection:  投影方式，eg: FISHEYE
+ * stereo:		立体格式（eg: 2D/3D)
+ * hfov: 		水平视角（eg:180°/360°）
+ * account: 	鉴权信息
+ **/
+
+##### 7.13 通过vid设置网络视频信息  
+public void SetVid(string vid, int format, Account account)；   
+/*
+ *  eg: 播放网络视频、切换清晰度时可调用此接口完成
+ * vid: 	视频ID
+ * format: 	清晰度ID
+ * account: 鉴权信息
+*/
+
+##### 7.14 获取当前播放位置  
+public int GetPlayPosition()；  
 
 ### 8. 检查混淆
 ```proguard
 -keep class com.viu.player.** { *; } 
 ```
+
+## 播放本地视频
+1. 拷贝vr1或mp4文件至Android 存储卡指定目录  
+	   eg: /sdcard/Movies/viuvideos/Boxing_2d_default.vr1  
+	   
+2. 进入工程目录下VRVIUBitVRSample/BitDemo/Script/BitLobby/BitLobby.cs，
+	   在public void goToVideoScene(GameObject tag)接口中，设置vi.url播放地址，
+	   改为步骤1中存储vr1或mp4文件的路径即可。
+
 ## 账号鉴权参数表
  |参数|说明|是否必填|类型|
  |:---|:---|:---|:---|
