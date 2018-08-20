@@ -3,7 +3,7 @@
 [![](https://img.shields.io/badge/Powered%20by-vrviu.com-brightgreen.svg)](https://vrviu.com)
 
 ## 版本历史
- 20180817 V2.2 增加清晰度选择，支持vr1文件格式，修复部分bug；  
+ 20180817 V2.2 增加清晰度选择，支持本地VR视频播放，支持8K vr1文件格式，修复部分bug；  
  20180726 V2.1 优化性能，底层库修改，增加巨幕支持接口；  
  20180712 V2.0 优化性能，支持设置vid播放，支持多UI图层；  
  20180607 V1.3 支持8K VR点播视频播放；  
@@ -145,7 +145,9 @@ player.GetResolution()；
 ```
 
 ##### 7.12 设置本地视频信息  
+```c#
 public void SetLocalVideoInfo(string url, int projection, int stereo, int hfov, Account account)；  
+```
 /**
  * url:			指定的vr1或者mp4文件路径
  * projection:  投影方式，eg: FISHEYE
@@ -155,7 +157,9 @@ public void SetLocalVideoInfo(string url, int projection, int stereo, int hfov, 
  **/
 
 ##### 7.13 通过vid设置网络视频信息  
-public void SetVid(string vid, int format, Account account)；   
+```c#
+public void SetVid(string vid, int format, Account account)； 
+```
 /*
  *  eg: 播放网络视频、切换清晰度时可调用此接口完成
  * vid: 	视频ID
@@ -164,7 +168,9 @@ public void SetVid(string vid, int format, Account account)；
 */
 
 ##### 7.14 获取当前播放位置  
-public int GetPlayPosition()；  
+```c#
+public int GetPlayPosition()； 
+```
 
 ### 8. 检查混淆
 ```proguard
