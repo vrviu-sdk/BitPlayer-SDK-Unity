@@ -140,7 +140,9 @@ player.Release();
 ```
 
 ##### 7.11获取清晰度列表  
-player.GetResolution()
+```c#
+player.GetResolution()；  
+```
 
 ##### 7.12 设置本地视频信息  
 public void SetLocalVideoInfo(string url, int projection, int stereo, int hfov, Account account)；  
@@ -149,7 +151,7 @@ public void SetLocalVideoInfo(string url, int projection, int stereo, int hfov, 
  * projection:  投影方式，eg: FISHEYE
  * stereo:		立体格式（eg: 2D/3D)
  * hfov: 		水平视角（eg:180°/360°）
- * account: 	鉴权信息
+ * account: 	鉴权信息  
  **/
 
 ##### 7.13 通过vid设置网络视频信息  
@@ -158,7 +160,7 @@ public void SetVid(string vid, int format, Account account)；
  *  eg: 播放网络视频、切换清晰度时可调用此接口完成
  * vid: 	视频ID
  * format: 	清晰度ID
- * account: 鉴权信息
+ * account: 鉴权信息  
 */
 
 ##### 7.14 获取当前播放位置  
