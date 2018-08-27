@@ -162,26 +162,16 @@ public class BitLobby : MonoBehaviour {
         if (tag.CompareTag("video 1"))
         {
             VideoInfo vi = new VideoInfo();
-            vi.title = "test";
-            vi.hfov = 180;
-            vi.stereo = 1;
-            vi.projection = 1;
-            vi.vid = null;
-            vi.url = "/sdcard/Movies/viuvideos/Boxing_2d_default.vr1";
-            vi.format = 5;
-            vi.vaid = (int)DefineType.TYPE1;
+            /* 视频文件路径：支持本地地址和网络url */
+            vi.url = "/sdcard/Movies/viuvideos/Scenery_2d_0_122.vr1";
             videoData = vi;
             SceneManager.LoadScene("BitVideo");
         }
         else if (tag.CompareTag("video 2"))
         {
             VideoInfo vi1 = new VideoInfo();
-            vi1.hfov = 180;
-            vi1.stereo = 1;
-            vi1.projection = 1;
-            vi1.vid = null;
-            vi1.url = "/sdcard/Movies/viuvideos/Boxing3.vr1";
-            vi1.vaid = (int)DefineType.TYPE2;
+            /* 视频文件路径：支持本地地址和网络url */
+            vi1.url = "/sdcard/Movies/viuvideos/waterfall8k_4k.mp4";
             videoData = vi1;
             SceneManager.LoadScene("BitVideo");
         }

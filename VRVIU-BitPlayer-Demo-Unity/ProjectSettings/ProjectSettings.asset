@@ -156,8 +156,8 @@ PlayerSettings:
     iOS: com.VRVIU.bitPlayer
   buildNumber: {}
   AndroidBundleVersionCode: 1
-  AndroidMinSdkVersion: 24
-  AndroidTargetSdkVersion: 24
+  AndroidMinSdkVersion: 21
+  AndroidTargetSdkVersion: 25
   AndroidPreferredInstallLocation: 1
   aotOptions: 
   stripEngineCode: 1
