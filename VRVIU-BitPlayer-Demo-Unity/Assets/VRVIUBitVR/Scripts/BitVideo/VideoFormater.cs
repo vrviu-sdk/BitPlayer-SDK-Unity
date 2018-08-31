@@ -60,7 +60,24 @@ namespace VRVIU.BitVRPlayer.BitVideo
         [SerializeField]
         [Tooltip("Default video playback format.")]
         private VideoFormat _format = VideoFormat.OPT_ERP_360_MONO;
+        private VideoFormat _videoFormat = VideoFormat.OPT_ERP_360_MONO;
 
+        public VideoFormat videoFormat
+        {
+            get
+            {
+                return _videoFormat;
+            }
+
+            set
+            {
+                if (_videoFormat != value)
+                {
+                    _videoFormat = value;
+                }
+
+            }
+        }
         public VideoFormat format
         {
             get
@@ -176,12 +193,13 @@ namespace VRVIU.BitVRPlayer.BitVideo
         /// <summary>
         /// Switch to any supported video format.
         /// </summary>
-        public void Switch(VideoFormat format)
+        public void Switch(VideoFormat format, VideoFormat vFormat)
         {
             if (this.format != format)
             {
                 this.format = format;
             }
+            videoFormat = vFormat;
             Switch();
         }
 
@@ -218,6 +236,26 @@ namespace VRVIU.BitVRPlayer.BitVideo
 
                     leftSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", Vector2.one);
                     leftSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", Vector2.zero);
+
+
+                    if (videoFormat != VideoFormat.OPT_FLAT_MONO 
+                        && videoFormat != VideoFormat.OPT_ERP_180_MONO 
+                        && videoFormat != VideoFormat.OPT_ERP_360_MONO
+                        && videoFormat != VideoFormat.OPT_FISHEYE_MONO 
+                        && videoFormat != VideoFormat.OPT_TROPIZED_MONO )
+                    {
+                        if (videoFormat == VideoFormat.OPT_ERP_180_LR || videoFormat == VideoFormat.OPT_ERP_360_LR || videoFormat == VideoFormat.OPT_FLAT_LR
+                       || videoFormat == VideoFormat.OPT_FISHEYE_LR || videoFormat == VideoFormat.OPT_TROPIZED_LR)
+                        {
+                            leftSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", new Vector2(0.5f, 1.0f));
+                            leftSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(0.5f, 0.0f));
+                        }
+                        else
+                        {
+                            leftSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", new Vector2(1.0f, 0.5f));
+                            leftSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", Vector2.zero);
+                        }
+                    }
                 }
 
                 if (rightEyeCamera != null)
@@ -229,6 +267,25 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     rightEyeCamera.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK;
                     rightSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", Vector2.one);
                     rightSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", Vector2.zero);
+
+                    if (videoFormat != VideoFormat.OPT_FLAT_MONO
+                        && videoFormat != VideoFormat.OPT_ERP_180_MONO
+                        && videoFormat != VideoFormat.OPT_ERP_360_MONO
+                        && videoFormat != VideoFormat.OPT_FISHEYE_MONO
+                        && videoFormat != VideoFormat.OPT_TROPIZED_MONO)
+                    {
+                        if (videoFormat == VideoFormat.OPT_ERP_180_LR || videoFormat == VideoFormat.OPT_ERP_360_LR || videoFormat == VideoFormat.OPT_FLAT_LR
+                       || videoFormat == VideoFormat.OPT_FISHEYE_LR || videoFormat == VideoFormat.OPT_TROPIZED_LR)
+                        {
+                            rightSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", new Vector2(0.5f, 1.0f));
+                            rightSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", new Vector2(0.5f, 0.0f));
+                        }
+                        else
+                        {
+                            rightSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", new Vector2(1.0f, 0.5f));
+                            rightSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", Vector2.zero);
+                        }
+                    }
                 }
 
             }

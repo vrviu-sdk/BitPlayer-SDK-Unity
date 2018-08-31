@@ -5,6 +5,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
     public class SetViewerFormat : MonoBehaviour
     {
         public static string m_formatType = "mono";
+        public static string m_videoFormatType = "mono";
 
         private const string FORMAT_STEREO_STRING = "stereo";
         private const string FORMAT_TOP_BOTTOM_STRING = "top_bottom";
@@ -29,6 +30,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         private const float LEFT_RIGHT_TEXTURE_SCALE_Y = 1.0f;
 
         private const float MONO_TEXTURE_SCALE = 1.0f;
+        private const float TOMONO_TEXTURE_SCALE = 0.5f;
 
         private const float TOP_BOTTOM_OFFSET_X = 0.0f;
         private const float LEFT_RIGHT_OFFSET_Y = 0.0f;
@@ -144,6 +146,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             float textureScaleX, textureScaleY;
             float textureLeftEyeOffsetX, textureLeftEyeOffsetY;
             float textureRightEyeOffsetX, textureRightEyeOffsetY;
+            Debug.Log("SetUpViewerFormat m_formatType" + m_formatType);
+            Debug.Log("SetUpViewerFormat m_videoFormatType" + m_videoFormatType);
 
             // set display image material based on encoded image format
             if (m_formatType.ToLower().Contains(FORMAT_TOP_BOTTOM_STRING))
@@ -192,6 +196,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             }
             else
             {
+                Debug.Log("SetUpViewerFormat m_videoFormatType" + m_videoFormatType);
 
                 textureScaleX = MONO_TEXTURE_SCALE;
                 textureScaleY = MONO_TEXTURE_SCALE;
@@ -199,6 +204,20 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                 textureLeftEyeOffsetY = 0.0f;
                 textureRightEyeOffsetX = 0.0f;
                 textureRightEyeOffsetY = 0.0f;
+
+                if(m_videoFormatType.ToLower().Contains(FORMAT_LEFT_RIGHT_STRING)
+                    || m_videoFormatType.ToLower().Contains(FORMAT_RIGHT_LEFT_STRING))
+                {
+                    textureScaleX = TOMONO_TEXTURE_SCALE;
+                    Debug.Log("SetUpViewerFormat textureScaleX = TOMONO_TEXTURE_SCALE"+ TOMONO_TEXTURE_SCALE);
+                }
+
+                if (m_videoFormatType.ToLower().Contains(FORMAT_BOTTOM_TOP_STRING)
+                    || m_videoFormatType.ToLower().Contains(FORMAT_TOP_BOTTOM_STRING))
+                {
+                    textureScaleY = TOMONO_TEXTURE_SCALE;
+                    Debug.Log("SetUpViewerFormat textureScaleY = TOMONO_TEXTURE_SCALE"+ TOMONO_TEXTURE_SCALE);
+                }
 
             }
 

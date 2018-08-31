@@ -28,8 +28,9 @@ namespace VRVIU.BitVRPlayer.BitVideo
         private int mProjection; //0：未知；1：ERP；2：FISHEYE；3：TROPIZED；4：FLAT
         private int mStereoType;//0：未知；1：2D；2：3D左右；3：3D上下；4：3D右左；5：3D下上
         private int mHfov;//0：未知度数视角；180：180度视角；360：360度视角
-        private int mVaid;
+        public int mVaid;
         private VideoFormat mFormat;
+        private VideoFormat mVideoFormat;
         public object VLog { get; private set; }
         private List<Format> mResolution = null;
         public enum SILVER_ERROR
@@ -232,7 +233,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             return mResolution;
         }
 
-        private VideoFormat ConvertFormat(VideoPorjection projection, VideoSteroType stereoType, VideoHfov hfov)
+        public static  VideoFormat ConvertFormat(VideoPorjection projection, VideoSteroType stereoType, VideoHfov hfov)
         {
             VideoFormat videoFormat = VideoFormat.OPT_ERP_360_MONO;
             if (projection == VideoPorjection.OPT_ERP)
@@ -361,10 +362,16 @@ namespace VRVIU.BitVRPlayer.BitVideo
         public void SetRenderMode(VideoPorjection projection, VideoSteroType steroType, VideoHfov hfov)
         {
             mFormat = ConvertFormat(projection, steroType, hfov);
+            VideoPorjection videoProjection = (VideoPorjection)VideoController.mCurrentVideoInfo.projection;
+            VideoSteroType videoSteroType = (VideoSteroType)VideoController.mCurrentVideoInfo.stereo;
+            VideoHfov videoHfov = (VideoHfov)VideoController.mCurrentVideoInfo.hfov;
+
+            Debug.Log("SetRenderMode videoProjection " + videoProjection + " videoSteroType " + videoSteroType + " videoHfov " + videoHfov);
+            mVideoFormat = ConvertFormat(videoProjection, videoSteroType, videoHfov);
             if (mediaPlayer)
             {
                 Debug.Log("media player set video forma projection " + projection + " steroType " + steroType + " hfov " + hfov);
-                mVideoFormater.Switch(mFormat);
+                mVideoFormater.Switch(mFormat, mVideoFormat);
             }
 
             if (mSilverPlayer)
@@ -420,10 +427,6 @@ namespace VRVIU.BitVRPlayer.BitVideo
 
         public void Release()
         {
-            if (mVideoFormater != null)
-            {
-                mVideoFormater.Release();
-            }
             mUrl = null;
             if (mSilverPlayer)
             {
@@ -437,6 +440,10 @@ namespace VRVIU.BitVRPlayer.BitVideo
             }
             else if (mediaPlayer)
             {
+                if (mVideoFormater != null)
+                {
+                    mVideoFormater.Release();
+                }
                 mediaPlayer.OnReady -= OnReady;
                 mediaPlayer.OnVideoFirstFrameReady -= OnFirstFrameReady;
                 mediaPlayer.OnEnd -= OnEnd;
@@ -662,6 +669,31 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     default:
                         Debug.LogError("Unknown format " + mFormat);
                         SetViewerFormat.m_formatType = "mono";
+                        break;
+                }
+                switch ((VideoFormat)mVideoFormat)
+                {
+                    case VideoFormat.OPT_ERP_180_MONO:
+                    case VideoFormat.OPT_ERP_360_MONO:
+                    case VideoFormat.OPT_FISHEYE_MONO:
+                    case VideoFormat.OPT_FLAT_MONO:
+                        SetViewerFormat.m_videoFormatType = "mono";
+                        break;
+                    case VideoFormat.OPT_ERP_180_TB:
+                    case VideoFormat.OPT_ERP_360_TB:
+                    case VideoFormat.OPT_FISHEYE_TB:
+                    case VideoFormat.OPT_FLAT_TB:
+                        SetViewerFormat.m_videoFormatType = "stereo_top_bottom";
+                        break;
+                    case VideoFormat.OPT_ERP_180_LR:
+                    case VideoFormat.OPT_ERP_360_LR:
+                    case VideoFormat.OPT_FISHEYE_LR:
+                    case VideoFormat.OPT_FLAT_LR:
+                        SetViewerFormat.m_videoFormatType = "stereo_left_right";
+                        break;
+                    default:
+                        Debug.LogError("Unknown format " + mFormat);
+                        SetViewerFormat.m_videoFormatType = "mono";
                         break;
                 }
 
