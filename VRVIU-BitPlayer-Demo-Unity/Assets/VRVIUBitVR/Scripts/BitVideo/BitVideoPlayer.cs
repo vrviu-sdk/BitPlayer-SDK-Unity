@@ -163,7 +163,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     mediaPlayer = null;
                     break;
             }
-            SetRenderMode((VideoPorjection)projection, (VideoSteroType)stereo, (VideoHfov)hfov);
+            SetRenderMode((VideoPorjection)projection, (VideoSteroType)stereo, (VideoHfov)hfov, (VideoPorjection)projection, (VideoSteroType)stereo, (VideoHfov)hfov);
         }
 
         private void OnStreamInfoBack(StreamInfoEnity streamInfo)
@@ -213,6 +213,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             {
                 Debug.Log("VideoInfo url " + url);
                 StreamInfoEnity streamInfo = JsonUtility.FromJson<StreamInfoEnity>(web.text);
+                
                 if (streamInfo.ret.code == 0)
                 {
                     streamInfo.total_content = web.text;
@@ -359,12 +360,9 @@ namespace VRVIU.BitVRPlayer.BitVideo
             return videoFormat;
         }
 
-        public void SetRenderMode(VideoPorjection projection, VideoSteroType steroType, VideoHfov hfov)
+        public void SetRenderMode(VideoPorjection projection, VideoSteroType steroType, VideoHfov hfov, VideoPorjection videoProjection, VideoSteroType videoSteroType, VideoHfov videoHfov)
         {
             mFormat = ConvertFormat(projection, steroType, hfov);
-            VideoPorjection videoProjection = (VideoPorjection)VideoController.mCurrentVideoInfo.projection;
-            VideoSteroType videoSteroType = (VideoSteroType)VideoController.mCurrentVideoInfo.stereo;
-            VideoHfov videoHfov = (VideoHfov)VideoController.mCurrentVideoInfo.hfov;
 
             Debug.Log("SetRenderMode videoProjection " + videoProjection + " videoSteroType " + videoSteroType + " videoHfov " + videoHfov);
             mVideoFormat = ConvertFormat(videoProjection, videoSteroType, videoHfov);
