@@ -3,6 +3,8 @@
 [![](https://img.shields.io/badge/Powered%20by-vrviu.com-brightgreen.svg)](https://vrviu.com)
 
 ## 版本历史
+
+ 20180903 V2.5 支持获取下载速度；  
  20180831 V2.4 支持大于4G的vr1文件，优化3D视频的2D单眼播放模式；  
  20180823 V2.3 支持本地vr1文件名修改；  
  20180817 V2.2 增加清晰度选择，支持本地VR视频播放，支持8K vr1文件格式，修复部分bug；  
@@ -172,6 +174,11 @@ public void SetVid(string vid, int format, Account account)；
 ##### 7.14 获取当前播放位置  
 ```c#
 public int GetPlayPosition()； 
+```
+
+##### 7.15 获取网络下载速度  
+```c#
+public long GetNetWorkSpeed()； 
 ```
 
 ### 8. 检查混淆
