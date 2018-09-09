@@ -197,10 +197,28 @@ public long GetNetWorkSpeed()；
 ## 账号鉴权参数表
  |参数|说明|是否必填|类型|
  |:---|:---|:---|:---|
- |AppId|分配给用户的ID，可通过 www.vrviu.com 填写表单或者联系客服申请|必填|String|
- |AccessKeyId|分配给用户的ID，可通过 www.vrviu.com 填写表单或者联系客服申请|必填|String|
- |BizId|分配给用户的ID，可通过 www.vrviu.com 填写表单或者联系客服申请|必填|String|
- |AccessKey|分配给用户的ID，可通过 www.vrviu.com 填写表单或者联系客服申请|必填|String
+ |AppId|分配给用户的ID，可发送邮件至 busniess@vrviu.com申请|必填|String|
+ |AccessKeyId|分配给用户的ID，可发送邮件至 busniess@vrviu.com申请|必填|String|
+ |BizId|分配给用户的ID，可发送邮件至 busniess@vrviu.com申请|必填|String|
+ |AccessKey|分配给用户的ID，可发送邮件至 busniess@vrviu.com申请|必填|String
+ 
+ 邮件发送内容如下：  
+ 标题：公司名+申请威尔云播放SDK  
+ 正文：  
+ ```
+ 请填写以下信息；  
+ 
+ 公司名：  
+ 公司网址：  
+ 联系人姓名：  
+ 联系电话：  
+ 联系邮件：  
+ 
+ 申请授权使用的SDK：  
+ 使用用途简述：  
+ 对应的威尔云平台账户（如果没有，请至http://master.vrviu.com）注册：  
+ ```
+ 
 
 ## 联系我们
  如果有技术问题咨询，请加入官方QQ群：136562408；   
