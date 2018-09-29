@@ -163,7 +163,7 @@ public class BitLobby : MonoBehaviour {
         {
             VideoInfo vi = new VideoInfo();
             /* 视频文件路径：支持本地地址和网络url */
-            vi.url = "/sdcard/Movies/viuvideos/Scenery_2d_0_122.vr1";
+            vi.url = "/sdcard/Movies/viuvideos/内金水河.mp4_viukavjek.vr1";
             videoData = vi;
             SceneManager.LoadScene("BitVideo");
         }
@@ -171,7 +171,7 @@ public class BitLobby : MonoBehaviour {
         {
             VideoInfo vi1 = new VideoInfo();
             /* 视频文件路径：支持本地地址和网络url */
-            vi1.url = "/sdcard/Movies/viuvideos/waterfall8k_4k.mp4";
+            vi1.url = "/sdcard/Movies/viuvideos/Boxing3.vr1";
             videoData = vi1;
             SceneManager.LoadScene("BitVideo");
         }
