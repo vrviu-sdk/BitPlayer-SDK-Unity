@@ -3,6 +3,10 @@
 [![](https://img.shields.io/badge/Powered%20by-vrviu.com-brightgreen.svg)](https://vrviu.com)
 
 ## 版本历史
+
+ 20180930 V2.7 支持vr1文件名特殊字符播放；优化seek精度；修复一些bug；   
+ 20180921 V2.6 支持最新的8K编码优化算法。修复bug，包括循环播放失败，本地播放普通4K视频偶现黑屏等；   
+ 20180903 V2.5 支持获取下载速度；  
  20180831 V2.4 支持大于4G的vr1文件，优化3D视频的2D单眼播放模式；  
  20180823 V2.3 支持本地vr1文件名修改；  
  20180817 V2.2 增加清晰度选择，支持本地VR视频播放，支持8K vr1文件格式，修复部分bug；  
@@ -13,7 +17,9 @@
  20180503 V1.1 支持4K VR点播和VR直播。
 
 ## 功能说明
- 支持最高8K分辨率的VR视频点播/直播功能。其中，VR视频点播支持播放本地或者云端的文件；VR直播支持相机实时推送的视频流。  
+ 支持最高8K分辨率的VR视频网络点播/直播功能。其中，VR点播支持播放云端的视频；VR直播支持相机实时推送的视频流。  
+ 支持最高8K分辨率的VR视频本地播放功能。8K视频为vr1格式，可以通过[威尔云](http://master.vrviu.com)转码后下载获得。  
+ 支持最高4K分辨率，MP4格式的普通视频播放。  
  本SDK免费使用，帐号需要申请授权。  
  
 ## 产品特点
@@ -38,7 +44,7 @@
 
 **9. 支持平台**：ARMV7, ARM64, X86  
 
-**10. 接口丰富**：提供播放器状态监听、屏幕常亮以及音量控制等接口  
+**10. 接口丰富**：提供播放器控制、状态监听、本地/网络视频播放、多清晰度切换等接口  
 
 **11. 处理器要求**：骁龙820或者同等性能以上  
 
@@ -174,6 +180,11 @@ public void SetVid(string vid, int format, Account account)；
 public int GetPlayPosition()； 
 ```
 
+##### 7.15 获取网络下载速度  
+```c#
+public long GetNetWorkSpeed()； 
+```
+
 ### 8. 检查混淆
 ```proguard
 -keep class com.viu.player.** { *; } 
@@ -190,11 +201,28 @@ public int GetPlayPosition()；
 ## 账号鉴权参数表
  |参数|说明|是否必填|类型|
  |:---|:---|:---|:---|
- |AppId|分配给用户的ID，可通过 www.vrviu.com 填写表单或者联系客服申请|必填|String|
- |AccessKeyId|分配给用户的ID，可通过 www.vrviu.com 填写表单或者联系客服申请|必填|String|
- |BizId|分配给用户的ID，可通过 www.vrviu.com 填写表单或者联系客服申请|必填|String|
- |AccessKey|分配给用户的ID，可通过 www.vrviu.com 填写表单或者联系客服申请|必填|String
-
+ |AppId|分配给用户的ID，可发送邮件至 busniess@vrviu.com申请|必填|String|
+ |AccessKeyId|分配给用户的ID，可发送邮件至 busniess@vrviu.com申请|必填|String|
+ |BizId|分配给用户的ID，可发送邮件至 busniess@vrviu.com申请|必填|String|
+ |AccessKey|分配给用户的ID，可发送邮件至 busniess@vrviu.com申请|必填|String
+ 
+ 邮件发送内容如下：  
+ ```
+ 标题：公司名+申请威尔云播放SDK  
+ ```
+ 正文 （请填写以下信息）：    
+ ```
+ 公司名：  
+ 公司网址：  
+ 联系人姓名：  
+ 联系电话：  
+ 联系邮件：  
+ 
+ 申请授权使用的SDK：  
+ 使用用途简述：  
+ 对应的威尔云平台账户（如果没有，请至http://master.vrviu.com注册）：  
+ ```
+ 
 ## 联系我们
  如果有技术问题咨询，请加入官方QQ群：136562408；   
  商务合作请电话：0755-86960615；邮箱：business@vrviu.com；或者至[官网](http://www.vrviu.com)"联系我们" 。  
