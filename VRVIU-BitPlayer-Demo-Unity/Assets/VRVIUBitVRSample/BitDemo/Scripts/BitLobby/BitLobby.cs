@@ -164,15 +164,10 @@ public class BitLobby : MonoBehaviour {
         if (tag.CompareTag("video 1"))// online video
         {
             VideoInfo vi = new VideoInfo();
-<<<<<<< HEAD
             vi.url = "https://rs-bs941.vrviu.com/viukmyc72/viukmyc72.10003a00e05o.0_0.mp4";
             vi.projection = (int)VideoPorjection.OPT_FISHEYE;
             vi.stereo = (int)VideoSteroType.OPT_MONO;
             vi.hfov = (int)VideoHfov.DEGREE_180;
-=======
-            /* 视频文件路径：支持本地地址和网络url */
-            vi.url = "/sdcard/Movies/viuvideos/内金水河.mp4_viukavjek.vr1";
->>>>>>> be5d528d40a751055563157bfde3149da254bce8
             videoData = vi;
             SceneManager.LoadScene("BitVideo");
         }
@@ -211,13 +206,8 @@ public class BitLobby : MonoBehaviour {
         else if (tag.CompareTag("video 6"))
         {
             VideoInfo vi1 = new VideoInfo();
-<<<<<<< HEAD
             //播放本地威尔云转码的vr1 8k视频（需要登录官网申请转码）
             vi1.url = "/sdcard/Movies/viuvideos/FE3K.vr1";
-=======
-            /* 视频文件路径：支持本地地址和网络url */
-            vi1.url = "/sdcard/Movies/viuvideos/Boxing3.vr1";
->>>>>>> be5d528d40a751055563157bfde3149da254bce8
             videoData = vi1;
             SceneManager.LoadScene("BitVideo");
         }
