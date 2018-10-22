@@ -33,6 +33,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
         private VideoFormat mVideoFormat;
         public object VLog { get; private set; }
         private List<Format> mResolution = null;
+        private int mLoop;//1:loop play mode; 0: not loop
         public enum SILVER_ERROR
         {
             SILVER_SUCCESS = 0,
@@ -84,6 +85,46 @@ namespace VRVIU.BitVRPlayer.BitVideo
             if (url.Contains(".vr1"))
             {
                 VideoInfo videoInfo = FileManager.getInstance().GetLocalFileVideoInfo(url);
+                if (videoInfo != null) {
+                    projection = videoInfo.projection;
+                    stereo = videoInfo.stereo;
+                    hfov = videoInfo.hfov;
+                }
+                mVaid = (int)DefineType.TYPE3;
+                mUrl = videoInfo.url;
+            }
+            else
+            {
+                mVaid = (int)DefineType.TYPE1;
+                mUrl = url;
+            }
+            SetUpPlayer(mVaid, projection, stereo, hfov, null);
+        }
+
+        /**
+         * url:指定的vr1或者mp4文件路径
+         * accuont:注册的账号
+         **/
+        public void SetLocalVideoInfo(string url,Account account)
+        {
+            mAccount = account;
+            if (string.IsNullOrEmpty(url))
+            {
+                Debug.Log("Url is empty!!");
+                return;
+            }
+            int projection = 0;
+            int stereo = 0;
+            int hfov = 0;
+            if (url.Contains(".vr1"))
+            {
+                VideoInfo videoInfo = FileManager.getInstance().GetLocalFileVideoInfo(url);
+                if (videoInfo != null)
+                {
+                    projection = videoInfo.projection;
+                    stereo = videoInfo.stereo;
+                    hfov = videoInfo.hfov;
+                }
                 mVaid = (int)DefineType.TYPE3;
                 mUrl = videoInfo.url;
             }
@@ -115,6 +156,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     mSilverPlayer.OnEnd += OnEnd;
                     mSilverPlayer.OnVideoError += OnError;
                     mSilverPlayer.OnResize += OnResize;
+                    mSilverPlayer.SetLoopPlay(mLoop);
                     if (!string.IsNullOrEmpty(mUrl))
                     {
                         mSilverPlayer.setUrl(mUrl);
@@ -151,7 +193,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     mSilverPlayer.OnEnd += OnEnd;
                     mSilverPlayer.OnVideoError += OnError;
                     mSilverPlayer.OnResize += OnResize;
-
+                    mSilverPlayer.SetLoopPlay(mLoop);
                     if (!string.IsNullOrEmpty(mUrl))
                     {
                         mSilverPlayer.setUrl(mUrl);
@@ -411,15 +453,72 @@ namespace VRVIU.BitVRPlayer.BitVideo
             }
         }
 
-        public void SetReplay(int count)
+        public bool IsUpdateFrame()
+        {
+            bool bUpdate = false;
+            if (mSilverPlayer)
+            {
+                
+                if(mSilverPlayer.GetCurrentState() == MEDIAPLAYER_STATE.PLAYING && mSilverPlayer.IsReadyToRender())
+                {
+                    bUpdate = true;
+                }
+                
+            }
+            else
+            {
+                if(mediaPlayer)
+                {
+                    bUpdate = mediaPlayer.IsUpdateFrame();
+                }
+                else
+                {
+                    Debug.Log("mediaPlayer is null!");
+                }
+            }
+            return bUpdate;
+        }
+
+        public void SetLoopPlay(int loop)
+        {
+            mLoop = loop;
+        }
+
+        public void Resume()
         {
             if (mSilverPlayer)
             {
-                mSilverPlayer.SetRePlay(count);
+                mSilverPlayer.Resume();
             }
             else if (mediaPlayer)
             {
-                //mediaPlayer.SetRePlay(count);
+                //mediaPlayer.Resume();
+            }
+        }
+
+        public bool IsReadyToRender()
+        {
+            if (mSilverPlayer)
+            {
+                return mSilverPlayer.IsReadyToRender();
+            }
+            else if (mediaPlayer)
+            {
+                //mediaPlayer.SetLoopPlay(loop);
+                return true;
+            }
+            return true;
+        }
+
+        public void RePlay()
+        {
+            if (mSilverPlayer)
+            {
+                mSilverPlayer.RePlay();
+            }
+            else if(mediaPlayer)
+            {
+                mediaPlayer.Play();
             }
         }
 
@@ -511,6 +610,11 @@ namespace VRVIU.BitVRPlayer.BitVideo
         {
             if (mSilverPlayer)
             {
+                int duration = (int)(mSilverPlayer.GetDuration() / 1000);
+                if (duration - iSeek <= 3000)
+                {
+                    iSeek = duration - 3000;
+                }
                 mSilverPlayer.SeekTo(iSeek * 1000);
             }
             else if (mediaPlayer)
@@ -571,6 +675,31 @@ namespace VRVIU.BitVRPlayer.BitVideo
             return currentState;
         }
 
+        public  int  GetErrorCode()
+        {
+            if (mSilverPlayer)
+            {
+                return (int)mSilverPlayer.GetError();
+            }
+            else if(mediaPlayer){
+                return (int)mediaPlayer.GetError();
+            }
+            return -110000;
+        }
+
+        private int  GetErrorExtra(int error)
+        {
+            if (mSilverPlayer)
+            {
+                return  mSilverPlayer.GetErrorExtra();
+            }
+            else if (mediaPlayer)
+            {
+                return  mediaPlayer.GetErrorExtra();
+            }
+            return -11000;
+        }
+
         public void Reload()
         {
             switch ((DefineType)mVaid)
@@ -587,6 +716,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
 
             if (mSilverPlayer)
             {
+                mSilverPlayer.SetLoopPlay(mLoop);
                 mSilverPlayer.setUrl(mUrl);
             }
             else if (mediaPlayer)
@@ -619,6 +749,18 @@ namespace VRVIU.BitVRPlayer.BitVideo
                 duration = mediaPlayer.GetDuration();
             }
             return duration;
+        }
+
+        public long GetNetWorkSpeed()
+        {
+            if (mSilverPlayer)
+            {
+                return (long)mSilverPlayer.GetNetWorkSpeed()/8;
+            }
+            else
+            {
+                return mediaPlayer.GetNetWorkSpeed();
+            }
         }
 
         public int GetPlayPosition()

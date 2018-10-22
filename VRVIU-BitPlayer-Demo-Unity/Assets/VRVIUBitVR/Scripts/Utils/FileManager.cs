@@ -93,7 +93,7 @@ namespace Assets.VRVIUBitVR.Utils
                 if (!string.IsNullOrEmpty(videoInfo.url) &&
                 !videoInfo.url.Contains("https") && !videoInfo.url.Contains("http"))
                 {
-                    videoInfo.url = "http://localhost:7777/vr1/" + filePath + "@" + videoPath + "/" + videoInfo.url;
+                    videoInfo.url = "http://localhost:7777/vr1/" + filePath + "/" + videoPath + "/" + videoInfo.url;
                 }
                 videoInfo.isLocal = 1;
             }

@@ -9,6 +9,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
     using System.IO;
     using VRVIU.BitVRPlayer.BitVideo;
     using System.Text;
+    using Assets.VRVIUBitVR.Scripts.Log;
 
     public class SilverMediaPlayerCtrl : MonoBehaviour
     {
@@ -71,7 +72,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
 
         private bool m_bIsFirstFrameReady;
 
-        private int m_replayCount = 0;
+        private int m_retryCounts;
         public Shader mShaderYUV;
         public enum MEDIAPLAYER_ERROR
         {
@@ -116,7 +117,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         //-------------------------------------------------------------------------
         void Awake()
         {
-            Debug.Log("SilverMediaPlayerCtrl  Awake");
+            VLog.log(VLog.LEVEL_INFO, "SilverMediaPlayerCtrl  Awake");
             m_bInit = true;
             m_bInitializedMoviePlayback = false;
         }
@@ -125,7 +126,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         // Use this for initialization
         void Start()
         {
-            Debug.Log("SilverMediaPlayerCtrl Start");
+            VLog.log(VLog.LEVEL_INFO, "SilverMediaPlayerCtrl Start");
             m_bInitializedMoviePlayback = false;
 
             // Enable gyro input, so that if VR is not enabled, we can use tilt
@@ -144,7 +145,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                 Camera camera = Camera.main;
                 if (camera == null)
                 {
-                    Debug.Log("Missing camera");
+                    VLog.log(VLog.LEVEL_ERROR, "Missing camera");
                     return;
                 }
                 // create a canvas and a text element to display the logs
@@ -177,7 +178,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
 
             m_yuvMaterial = new Material(mShaderYUV);
             Shader nv12_shader = Shader.Find("Unlit/Unlit_NV12");
-            Debug.Log("Using shader Unlit_NV12");
+            VLog.log(VLog.LEVEL_INFO, "Using shader Unlit_NV12");
             Debug.Assert(nv12_shader != null, "Make sure you have the Unlit/Unlit_NV12 shader in the project");
             m_nv12Material = new Material(nv12_shader);
 
@@ -186,7 +187,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         //-------------------------------------------------------------------------
         void OnApplicationQuit()
         {
-            Debug.Log("SilverMediaPlayerCtrl OnApplicationQuit");
+            VLog.log(VLog.LEVEL_INFO, "SilverMediaPlayerCtrl OnApplicationQuit");
             if (System.IO.Directory.Exists(Application.persistentDataPath + "/Data") == true)
                 System.IO.Directory.Delete(Application.persistentDataPath + "/Data", true);
         }
@@ -295,7 +296,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                 newMesh = Resources.Load(meshName, typeof(Mesh)) as Mesh;
                 if (newMesh != null)
                 {
-                    Debug.Log("Loaded mesh from internal resource " + meshName);
+                    VLog.log(VLog.LEVEL_ERROR, "Loaded mesh from internal resource " + meshName);
                 }
             }
 
@@ -308,16 +309,16 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                 {
                     // Load mesh here
                     newMesh = ObjImporter.ImportMesh(meshFile.text);
-                    Debug.Log("New mesh imported from " + meshURL);
+                    VLog.log(VLog.LEVEL_DEBUG, "New mesh imported from " + meshURL);
                     if (newMesh == null)
                     {
-                        Debug.LogError("Unable to parse mesh at URL " + meshURL);
+                        VLog.log(VLog.LEVEL_ERROR, "Unable to parse mesh at URL " + meshURL);
                         return false;
                     }
                 }
                 else
                 {
-                    Debug.LogError("Unable to retrieve mesh URL " + meshURL);
+                    VLog.log(VLog.LEVEL_ERROR, "Unable to retrieve mesh URL " + meshURL);
                     return false;
                 }
             }
@@ -334,6 +335,16 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                 }
             }
             return true;
+        }
+
+        public int GetError()
+        {
+            return Call_GetError();
+        }
+
+        public int GetErrorExtra()
+        {
+            return Call_GetErrorExtra();
         }
 
         //-------------------------------------------------------------------------
@@ -427,8 +438,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         {
             m_VideoTexture = null;
             SilverPlayer.SILVER_ERROR Result = m_Player.Initialize();
-            m_Player.SetReplay(m_replayCount);
             Result = m_Player.SetVideoUrl(m_strFileName.Trim());
+            m_Player.SetLoopPlay(m_retryCounts);
             Call_Prepare();
         }
 
@@ -436,8 +447,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         {
             m_VideoTexture = null;
             SilverPlayer.SILVER_ERROR Result = m_Player.Initialize();
-            m_Player.SetReplay(m_replayCount);
             Result = m_Player.SetVideoInfo(videoInfo, size);
+            m_Player.SetLoopPlay(m_retryCounts);
             Call_Prepare();
         }
         private void Call_Prepare()
@@ -534,7 +545,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                         {
                             if (texId != IntPtr.Zero)
                             {
-                                Debug.Log("NV12 setup, external texture id " + texId);
+                                VLog.log(VLog.LEVEL_ERROR, "NV12 setup, external texture id " + texId);
                                 m_VideoTexture[0] = Texture2D.CreateExternalTexture(m_CurrentState.iWidth, m_CurrentState.iHeight, TextureFormat.RGBA32, false, false, texId);
                             }
                             else
@@ -678,7 +689,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                     m_VideoTexture = new Texture2D[1];
                     IntPtr texId;
                     m_Player.GetExternalTexture( out texId );
-                    Debug.Log("NV12 setup, external texture id " + texId);
+                    VLog.log(VLog.LEVEL_DEBUG,"NV12 setup, external texture id " + texId);
                     m_VideoTexture[0] = Texture2D.CreateExternalTexture(m_CurrentState.iWidth, m_CurrentState.iHeight, TextureFormat.RGBA32, false, false, texId );
 #else
                         m_VideoTexture = new Texture2D[2];
@@ -686,7 +697,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                         m_VideoTexture[1] = new Texture2D(m_CurrentState.iWidth / 2, m_CurrentState.iHeight / 2, TextureFormat.RG16, false);
                         m_VideoTexture[0].Apply();
                         m_VideoTexture[1].Apply();
-                        Debug.Log("NV12 textures, Y:" + m_VideoTexture[0].GetNativeTexturePtr() + ", UV:" + m_VideoTexture[1].GetNativeTexturePtr());
+                        VLog.log(VLog.LEVEL_DEBUG, "NV12 textures, Y:" + m_VideoTexture[0].GetNativeTexturePtr() + ", UV:" + m_VideoTexture[1].GetNativeTexturePtr());
 #endif
                         break;
                     }
@@ -846,7 +857,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         //-------------------------------------------------------------------------
         void OnDestroy()
         {
-            Debug.Log("SilverMediaPlayerCtrl OnDestroy");
+            VLog.log(VLog.LEVEL_INFO, "SilverMediaPlayerCtrl OnDestroy");
             if (m_ViewerFormatScript != null) {
                 m_ViewerFormatScript.Release();
             }
@@ -868,7 +879,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             }
             else
             {
-                Call_Play();
+                Call_Resume();
+                //Call_Play();
                 m_bPause = false;
             }
         }
@@ -915,6 +927,15 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             {
                 Call_Pause();
                 m_bPause = true;
+            }
+        }
+
+        //-------------------------------------------------------------------------
+        public void Resume()
+        {
+            if (m_CurrentState.eState == MEDIAPLAYER_STATE.PAUSED)
+            {
+                Call_Resume();
             }
         }
 
@@ -1024,8 +1045,24 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             }
         }
 
-        public void SetRePlay(int count) {
-            Call_SetReplay(count);
+        public void SetLoopPlay(int loop) {
+            m_retryCounts = loop;
+            Call_SetLoopPlay(loop);
+        }
+
+        public bool IsReadyToRender()
+        {
+            int ret = Call_IsReadyToRender();
+            if (ret != 1)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public void RePlay()
+        {
+            Call_RePlay();
         }
 
         //-------------------------------------------------------------------------
@@ -1042,6 +1079,11 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             {
                 return 0;
             }
+        }
+
+        public float GetNetWorkSpeed()
+        {
+            return Call_GetNetWorkSpeed();
         }
 
         //-------------------------------------------------------------------------
@@ -1103,7 +1145,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         //-------------------------------------------------------------------------
         public void UnLoad()
         {
-            Debug.Log("SilverMediaPlayerCtrl UnLoad");
+            VLog.log(VLog.LEVEL_INFO, "SilverMediaPlayerCtrl UnLoad");
             m_bCheckFBO = false;
             Call_UnLoad();
             m_CurrentState.eState = MEDIAPLAYER_STATE.NOT_READY;
@@ -1197,7 +1239,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                                         if (Renderer.material.shader.name != m_yuvMaterial.shader.name)
                                         {
                                             Renderer.material = m_yuvMaterial;
-                                            Debug.Log("Setup material YUV");
+                                            VLog.log(VLog.LEVEL_INFO, "Setup material YUV");
                                             bMaterialChanged = true;
                                         }
                                         if (Renderer.material.GetTexture("_Y") != m_VideoTexture[0]) Renderer.material.SetTexture("_Y", m_VideoTexture[0]);
@@ -1210,7 +1252,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                                         if (Renderer.material.shader.name != m_nv12Material.shader.name)
                                         {
                                             Renderer.material = m_nv12Material;
-                                            Debug.Log("Setup material NV12");
+                                            VLog.log(VLog.LEVEL_INFO, "Setup material NV12");
                                             bMaterialChanged = true;
                                         }
 #if !UNITY_ANDROID || UNITY_EDITOR
@@ -1220,7 +1262,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                                     }
                                     break;
                                 default:
-                                    Debug.LogError("Error: Unhandled pixelFormat " + m_CurrentState.pixelFormat);
+                                    VLog.log(VLog.LEVEL_ERROR, "Error: Unhandled pixelFormat " + m_CurrentState.pixelFormat);
                                     break;
                             }
                         }
@@ -1267,9 +1309,17 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             m_Player.SeekTo(lSeek);
         }
 
-        private void Call_SetReplay(int count) {
-            m_Player.SetReplay(count);
+        private void Call_SetLoopPlay(int loop) {
+            m_Player.SetLoopPlay(loop);
         }
+
+        private int Call_IsReadyToRender()
+        {
+            int ready = 0;
+            m_Player.IsReadyToRender(out ready);
+            return ready;
+        }
+
         private long Call_GetSeekPosition()
         {
             SilverPlayer.SILVER_ERROR Result;
@@ -1281,6 +1331,11 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         private void Call_Play()
         {
             m_Player.Play();
+        }
+
+        private void Call_Resume()
+        {
+            m_Player.Resume();
         }
 
         private IntPtr[] Call_GetVideoTexture(out Int64 lTimestamp, out Vector3 orientation, out bool rotateMesh )
@@ -1297,7 +1352,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
 
         private void Call_RePlay()
         {
-            m_Player.Play();
+            m_Player.SilverReplay();
         }
 
         private void Call_Pause()
@@ -1340,6 +1395,13 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             return duration;
         }
 
+        private float Call_GetNetWorkSpeed()
+        {
+            float speed = 0.0F;
+            m_Player.GetNetWorkSpeed(out speed);
+            return speed;
+        }
+
         private int Call_GetCurrentSeekPercent()
         {
             return -1;
@@ -1357,12 +1419,12 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             Result = m_Player.Update();
             if (Result != SilverPlayer.SILVER_ERROR.SILVER_SUCCESS)
             {
-                Debug.LogError("Update returned error " + Result);
+                VLog.log(VLog.LEVEL_ERROR, "Update returned error " + Result);
             }
             double elapsedTime = (Time.realtimeSinceStartup - startTime) * 1e3;
             if (elapsedTime > 10)
             {
-                Debug.LogWarning("Update took a long time " + elapsedTime + "mS");
+                VLog.log(VLog.LEVEL_WARN, "Update took a long time " + elapsedTime + "mS");
             }
             return (int)Result;
         }
@@ -1443,7 +1505,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             double elapsedTime = (Time.realtimeSinceStartup - startTime) * 1e3;
             if (elapsedTime > 5)
             {
-                Debug.LogWarning("GetState took a long time " + elapsedTime + "mS");
+                VLog.log(VLog.LEVEL_WARN, "GetState took a long time " + elapsedTime + "mS");
             }
             return ResultingState;
         }

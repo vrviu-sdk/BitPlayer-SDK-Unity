@@ -17,7 +17,6 @@ namespace VRVIU.BitVRPlayer.BitVideo
         ERROR = 7,
         END = 8,
         SEEKING = 9,
-        FIRSTFRAME = 10,
-        BUFFERING = 11
+        BUFFERING = 10
     }
 }

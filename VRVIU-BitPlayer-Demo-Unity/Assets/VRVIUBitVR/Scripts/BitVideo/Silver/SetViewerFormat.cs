@@ -1,3 +1,5 @@
+using Assets.VRVIUBitVR.Scripts.Log;
+
 namespace VRVIU.BitVRPlayer.BitVideo.Silver
 {
     using UnityEngine;
@@ -19,6 +21,11 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         private const string LEFT_EYE_LAYER_NAME = "LeftEye";
         private const string RIGHT_EYE_LAYER_NAME = "RightEye";
         private const string UI_LAYER_NAME = "UI";
+        private const string DEFAULT_LAYER_NAME = "Default";
+        private const string IGONRE_RAYCAST_LAYER_NAME = "Ignore Raycast";
+        private const string EVERYTHING_LAYER_NAME = "Everything";
+        private const string TRANSPARENTFX_LAYER_NAME = "TransparentFX";
+
 
         private const string LEFT_EYE_IMAGE_SPHERE_NAME = "LeftSide/Holder";
         private const string RIGHT_EYE_IMAGE_SPHERE_NAME = "RightSide/Holder";
@@ -54,7 +61,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         private MeshFilter leftEyeImageFilter;
         public void OnEnable()
         {
-            Debug.Log("SilverFormat OnEnable");
+            VLog.log(VLog.LEVEL_INFO,"SilverFormat OnEnable");
             VideoFormater formatter = FindObjectOfType< VideoFormater>();
 
             if (formatter)
@@ -81,6 +88,11 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             int LEFT_EYE_LAYER_MASK = (1 << LayerMask.NameToLayer(LEFT_EYE_LAYER_NAME));
             int RIGHT_EYE_LAYER_MASK = (1 << LayerMask.NameToLayer(RIGHT_EYE_LAYER_NAME));
             int UI_LAYER_MASK = (1 << LayerMask.NameToLayer(UI_LAYER_NAME));
+            int DEFAULT_LAYER_MASK = (1 << LayerMask.NameToLayer(DEFAULT_LAYER_NAME));
+            int IGONRE_RAYCAST_LAYER_MASK = (1 << LayerMask.NameToLayer(IGONRE_RAYCAST_LAYER_NAME));
+            int EVERY_THING_LAYER_MASK = (1 << LayerMask.NameToLayer(EVERYTHING_LAYER_NAME));
+            int TRANSPRENTFX_LAYER_MASK = (1 << LayerMask.NameToLayer(TRANSPARENTFX_LAYER_NAME)); 
+
             // set up camera and image materials for specified playback format
 
             // monoscopic image
@@ -104,10 +116,12 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                 leftEyeCameraComponent.stereoTargetEye = StereoTargetEyeMask.Both;
 
                 // only need to show left eye layer display (since we will display same image on both eyes)
-                leftEyeCameraComponent.cullingMask = LEFT_EYE_LAYER_MASK+ UI_LAYER_MASK;
+                leftEyeCameraComponent.cullingMask = LEFT_EYE_LAYER_MASK+ UI_LAYER_MASK + DEFAULT_LAYER_MASK + 
+                    IGONRE_RAYCAST_LAYER_MASK + EVERY_THING_LAYER_MASK + TRANSPRENTFX_LAYER_MASK;
 
                 rightEyeCameraComponent.stereoTargetEye = StereoTargetEyeMask.Both;
-                rightEyeCameraComponent.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK;
+                rightEyeCameraComponent.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK + DEFAULT_LAYER_MASK +
+                    IGONRE_RAYCAST_LAYER_MASK + EVERY_THING_LAYER_MASK + TRANSPRENTFX_LAYER_MASK;
 
             }
             else
@@ -123,7 +137,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                     // set left camera component to display to left eye only
                     leftEyeCameraComponent.stereoTargetEye = StereoTargetEyeMask.Left;
                     // set left camera to only show left eye layer display
-                    leftEyeCameraComponent.cullingMask = LEFT_EYE_LAYER_MASK + UI_LAYER_MASK;
+                    leftEyeCameraComponent.cullingMask = LEFT_EYE_LAYER_MASK + UI_LAYER_MASK + DEFAULT_LAYER_MASK +
+                    IGONRE_RAYCAST_LAYER_MASK + EVERY_THING_LAYER_MASK + TRANSPRENTFX_LAYER_MASK;
                     leftEyeCameraComponent.stereoSeparation = 0;
                 }
 
@@ -136,7 +151,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                     // set right camera component to display to right eye only
                     rightEyeCameraComponent.stereoTargetEye = StereoTargetEyeMask.Right;
                     // set right camera to only show right eye layer display
-                    rightEyeCameraComponent.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK;
+                    rightEyeCameraComponent.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK + DEFAULT_LAYER_MASK +
+                    IGONRE_RAYCAST_LAYER_MASK + EVERY_THING_LAYER_MASK + TRANSPRENTFX_LAYER_MASK;
                     rightEyeCameraComponent.stereoSeparation = 0;
                 }
 
@@ -146,8 +162,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             float textureScaleX, textureScaleY;
             float textureLeftEyeOffsetX, textureLeftEyeOffsetY;
             float textureRightEyeOffsetX, textureRightEyeOffsetY;
-            Debug.Log("SetUpViewerFormat m_formatType" + m_formatType);
-            Debug.Log("SetUpViewerFormat m_videoFormatType" + m_videoFormatType);
+            VLog.log(VLog.LEVEL_DEBUG, "SetUpViewerFormat m_formatType" + m_formatType);
+            VLog.log(VLog.LEVEL_DEBUG, "SetUpViewerFormat m_videoFormatType" + m_videoFormatType);
 
             // set display image material based on encoded image format
             if (m_formatType.ToLower().Contains(FORMAT_TOP_BOTTOM_STRING))
@@ -196,7 +212,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             }
             else
             {
-                Debug.Log("SetUpViewerFormat m_videoFormatType" + m_videoFormatType);
+                VLog.log(VLog.LEVEL_DEBUG, "SetUpViewerFormat m_videoFormatType" + m_videoFormatType);
 
                 textureScaleX = MONO_TEXTURE_SCALE;
                 textureScaleY = MONO_TEXTURE_SCALE;
@@ -209,14 +225,14 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
                     || m_videoFormatType.ToLower().Contains(FORMAT_RIGHT_LEFT_STRING))
                 {
                     textureScaleX = TOMONO_TEXTURE_SCALE;
-                    Debug.Log("SetUpViewerFormat textureScaleX = TOMONO_TEXTURE_SCALE"+ TOMONO_TEXTURE_SCALE);
+                    VLog.log(VLog.LEVEL_DEBUG, "SetUpViewerFormat textureScaleX = TOMONO_TEXTURE_SCALE" + TOMONO_TEXTURE_SCALE);
                 }
 
                 if (m_videoFormatType.ToLower().Contains(FORMAT_BOTTOM_TOP_STRING)
                     || m_videoFormatType.ToLower().Contains(FORMAT_TOP_BOTTOM_STRING))
                 {
                     textureScaleY = TOMONO_TEXTURE_SCALE;
-                    Debug.Log("SetUpViewerFormat textureScaleY = TOMONO_TEXTURE_SCALE"+ TOMONO_TEXTURE_SCALE);
+                    VLog.log(VLog.LEVEL_DEBUG, "SetUpViewerFormat textureScaleY = TOMONO_TEXTURE_SCALE" + TOMONO_TEXTURE_SCALE);
                 }
 
             }
@@ -293,7 +309,7 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         // Use this for initialization
         void Start()
         {
-            Debug.Log("SilverFormat Start");
+            VLog.log(VLog.LEVEL_INFO, "SilverFormat Start");
             SetUpViewerFormat();
         }
 

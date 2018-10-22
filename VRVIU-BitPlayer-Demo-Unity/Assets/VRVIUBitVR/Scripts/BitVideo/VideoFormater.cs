@@ -3,6 +3,7 @@
 /// </summary>
 namespace VRVIU.BitVRPlayer.BitVideo
 {
+    using Assets.VRVIUBitVR.Scripts.Log;
     using UnityEngine;
     using VRVIU.BitVRPlayer.BitVideo.Silver;
 
@@ -19,6 +20,14 @@ namespace VRVIU.BitVRPlayer.BitVideo
         private static readonly string UI_LAYER_NAME = "UI";
 
         private static readonly string RIGHT_EYE_LAYER_NAME = "RightEye";
+
+        private static readonly string DEFAULT_LAYER_NAME = "Default";
+
+        private const string IGONRE_RAYCAST_LAYER_NAME = "Ignore Raycast";
+
+        private const string EVERYTHING_LAYER_NAME = "Everything";
+
+        private const string TRANSPARENTFX_LAYER_NAME = "TransparentFX";
         #endregion
 
         #region Public variables
@@ -113,7 +122,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
 
         public void SetUp()
         {
-            Debug.Log("VideoFormater Awake");
+            VLog.log(VLog.LEVEL_INFO, "VideoFormater Awake");
             if (leftSide != null)
             {
                 leftSideMeshFilter = leftSide.GetComponent<MeshFilter>();
@@ -160,14 +169,14 @@ namespace VRVIU.BitVRPlayer.BitVideo
 
             if (leftEyeCamera == null || rightEyeCamera == null)
             {
-                Debug.LogWarning("Missing left or right eye camera in your scene, which will cause stereo unavailable.");
+                VLog.log(VLog.LEVEL_WARN, "Missing left or right eye camera in your scene, which will cause stereo unavailable.");
             }
 
         }
         // Use this for initialization
         void Start()
         {
-            Debug.Log("VideoFormater start");
+            VLog.log(VLog.LEVEL_INFO, "VideoFormater start");
         }
 
   
@@ -218,7 +227,11 @@ namespace VRVIU.BitVRPlayer.BitVideo
             int LEFT_EYE_LAYER_MASK = (1 << LayerMask.NameToLayer(LEFT_EYE_LAYER_NAME)) | (1 << 0);
             int RIGHT_EYE_LAYER_MASK = (1 << LayerMask.NameToLayer(RIGHT_EYE_LAYER_NAME)) | (1 << 0);
             int UI_LAYER_MASK = (1 << LayerMask.NameToLayer(UI_LAYER_NAME)) | (1 << 0);
-            Debug.Log("video format switch " + format);
+            int DEFAULT_LAYER_MASK = (1 << LayerMask.NameToLayer(DEFAULT_LAYER_NAME)) | (1 << 0);
+            int IGONRE_RAYCAST_LAYER_MASK = (1 << LayerMask.NameToLayer(IGONRE_RAYCAST_LAYER_NAME));
+            int EVERY_THING_LAYER_MASK = (1 << LayerMask.NameToLayer(EVERYTHING_LAYER_NAME));
+            int TRANSPRENTFX_LAYER_MASK = (1 << LayerMask.NameToLayer(TRANSPARENTFX_LAYER_NAME));
+            VLog.log(VLog.LEVEL_DEBUG, "video format switch " + format);
             // Monoscopic
             if (format == VideoFormat.OPT_FLAT_MONO || format == VideoFormat.OPT_ERP_180_MONO || format == VideoFormat.OPT_ERP_360_MONO
                 || format == VideoFormat.OPT_FISHEYE_MONO || format == VideoFormat.OPT_TROPIZED_MONO)
@@ -232,7 +245,8 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     leftEyeCamera.stereoTargetEye = StereoTargetEyeMask.Both;
 
                     // Only need to show left eye layer display content (since we will display same image on both eyes)
-                    leftEyeCamera.cullingMask = LEFT_EYE_LAYER_MASK + UI_LAYER_MASK;
+                    leftEyeCamera.cullingMask = LEFT_EYE_LAYER_MASK + UI_LAYER_MASK+ DEFAULT_LAYER_MASK +
+                    IGONRE_RAYCAST_LAYER_MASK + EVERY_THING_LAYER_MASK + TRANSPRENTFX_LAYER_MASK;
 
                     leftSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", Vector2.one);
                     leftSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", Vector2.zero);
@@ -264,7 +278,8 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     rightEyeCamera.gameObject.SetActive(true);
                     // Set left camera component to display both eyes
                     rightEyeCamera.stereoTargetEye = StereoTargetEyeMask.Both;
-                    rightEyeCamera.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK;
+                    rightEyeCamera.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK + DEFAULT_LAYER_MASK +
+                    IGONRE_RAYCAST_LAYER_MASK + EVERY_THING_LAYER_MASK + TRANSPRENTFX_LAYER_MASK; 
                     rightSide.GetComponent<MeshRenderer>().material.SetTextureScale("_MainTex", Vector2.one);
                     rightSide.GetComponent<MeshRenderer>().material.SetTextureOffset("_MainTex", Vector2.zero);
 
@@ -299,7 +314,8 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     // Set left camera component to display to left eye only
                     leftEyeCamera.stereoTargetEye = StereoTargetEyeMask.Left;
                     // Set left camera to only show left eye layer display
-                    leftEyeCamera.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK;
+                    leftEyeCamera.cullingMask = RIGHT_EYE_LAYER_MASK + UI_LAYER_MASK + DEFAULT_LAYER_MASK +
+                    IGONRE_RAYCAST_LAYER_MASK + EVERY_THING_LAYER_MASK + TRANSPRENTFX_LAYER_MASK; 
 
                     if (format == VideoFormat.OPT_ERP_180_LR || format == VideoFormat.OPT_ERP_360_LR || format == VideoFormat.OPT_FLAT_LR
                         || format == VideoFormat.OPT_FISHEYE_LR || format == VideoFormat.OPT_TROPIZED_LR)
@@ -321,7 +337,8 @@ namespace VRVIU.BitVRPlayer.BitVideo
                     // Set right camera component to display to right eye only
                     rightEyeCamera.stereoTargetEye = StereoTargetEyeMask.Right;
                     // Set right camera to only show right eye layer display
-                    rightEyeCamera.cullingMask = LEFT_EYE_LAYER_MASK + UI_LAYER_MASK;
+                    rightEyeCamera.cullingMask = LEFT_EYE_LAYER_MASK + UI_LAYER_MASK + DEFAULT_LAYER_MASK +
+                    IGONRE_RAYCAST_LAYER_MASK + EVERY_THING_LAYER_MASK + TRANSPRENTFX_LAYER_MASK;
 
                     if (format == VideoFormat.OPT_ERP_180_LR || format == VideoFormat.OPT_ERP_360_LR || format == VideoFormat.OPT_FLAT_LR
                         || format == VideoFormat.OPT_FISHEYE_LR || format == VideoFormat.OPT_TROPIZED_LR)
@@ -368,7 +385,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
             }
             else
             {
-                Debug.LogError("ERROR: unknown video format input.");
+                VLog.log(VLog.LEVEL_ERROR, "ERROR: unknown video format input.");
                 return;
             }
 
@@ -414,7 +431,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
                 newMesh = Resources.Load(meshName, typeof(Mesh)) as Mesh;
                 if (newMesh != null)
                 {
-                    Debug.Log("Loaded mesh from internal resource " + meshName);
+                    VLog.log(VLog.LEVEL_DEBUG, "Loaded mesh from internal resource " + meshName);
                 }
             }
 
@@ -427,22 +444,22 @@ namespace VRVIU.BitVRPlayer.BitVideo
                 {
                     // Load mesh here
                     newMesh = ObjImporter.ImportMesh(meshFile.text);
-                    Debug.Log("New mesh imported from " + meshURL);
+                    VLog.log(VLog.LEVEL_DEBUG, "New mesh imported from " + meshURL);
                     if (newMesh == null)
                     {
-                        Debug.LogError("Unable to parse mesh at URL " + meshURL + " error " + meshFile.error);
+                        VLog.log(VLog.LEVEL_ERROR, "Unable to parse mesh at URL " + meshURL + " error " + meshFile.error);
                         return newMesh;
                     }
                 }
                 else
                 {
-                    Debug.LogError("Unable to retrieve mesh URL " + meshURL + " error " + meshFile.error);
+                    VLog.log(VLog.LEVEL_ERROR, "Unable to retrieve mesh URL " + meshURL + " error " + meshFile.error);
                     return newMesh;
                 }
             }
             if (newMesh != null)
             {
-                Debug.Log("Download a new mesh URL " + meshURL);
+                VLog.log(VLog.LEVEL_ERROR, "Download a new mesh URL " + meshURL);
             }
             return newMesh;
         }

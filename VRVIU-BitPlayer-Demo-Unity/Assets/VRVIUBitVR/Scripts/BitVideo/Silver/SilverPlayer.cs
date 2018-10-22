@@ -304,6 +304,8 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
         private static extern SILVER_ERROR silverGetDuration(IntPtr s, out Int64 pos);
         [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
+        private static extern SILVER_ERROR silverGetDownloadingSpeed(IntPtr s, out float speed);
+        [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
         private static extern SILVER_ERROR silverSetVolume(IntPtr s, float f);
         [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
         private static extern SILVER_ERROR silverSetSpeed(IntPtr s, float f);
@@ -323,12 +325,22 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         private static extern SILVER_ERROR silverGetExternalTexture(IntPtr s, out Int64 externalTexture);
         [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
         private static extern IntPtr silverGetErrorString(SILVER_ERROR error);
-        [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
-        private static extern SILVER_ERROR silverSetReplay(IntPtr s, int replayCount);
+        //[DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
+        //private static extern SILVER_ERROR silverSetReplay(IntPtr s, int replayCount);
         [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
         private static extern SILVER_ERROR silverGetError(IntPtr s);
         [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
         private static extern SILVER_ERROR silverSetVideoInfo(IntPtr s, String videoInfo, int size);
+
+        [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
+        private static extern SILVER_ERROR silverReplay(IntPtr s);
+        [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
+        private static extern SILVER_ERROR silverIsReadyToRender(IntPtr s, out Int32 ready);
+        [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
+        private static extern SILVER_ERROR silverSetLoopPlay(IntPtr s, int loopPlay);
+        [DllImport("silver-sdk", CallingConvention = CallingConvention.Cdecl)]
+        private static extern SILVER_ERROR silverResume(IntPtr s);
+
 #endif
 
         //******************
@@ -502,6 +514,17 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
         {
             if (m_Instance == IntPtr.Zero) return SILVER_ERROR.SILVER_NOT_EXIST;
             return silverPlay(m_Instance);
+        }
+
+        //
+        // @fn SILVER_ERROR silverResume(SilverPlayer* p)
+        // @brief resume play status
+        // @param \pPlayer Pointer to player object
+        // @return SILVER_SUCCESS on function success, other error code on failure.
+        public SILVER_ERROR Resume()
+        {
+            if (m_Instance == IntPtr.Zero) return SILVER_ERROR.SILVER_NOT_EXIST;
+            return silverResume(m_Instance);
         }
 
         //
@@ -753,6 +776,13 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             return silverGetDuration(m_Instance, out DurationUs);
         }
 
+        public SILVER_ERROR GetNetWorkSpeed(out float Speed)
+        {
+            Speed = 0.0F;
+            if (m_Instance == IntPtr.Zero) return SILVER_ERROR.SILVER_NOT_EXIST;
+            return silverGetDownloadingSpeed(m_Instance, out Speed);
+        }
+
         //
         // @fn SILVER_ERROR silverGetCurrentSeekPosition(SilverPlayer* p, int64_t* pSeekPositionUs)
         // @brief Return current seek position of sequence
@@ -910,17 +940,43 @@ namespace VRVIU.BitVRPlayer.BitVideo.Silver
             return Marshal.PtrToStringAnsi(result);
         }
         //
-        // @fn SILVER_ERROR silverSetReplay( int replayCount )
+        // @fn SILVER_ERROR silverSetLoopPlay( int replayCount )
         // @brief Set auto-repeat count at end of video sequence
         // @param \pPlayer Pointer to player object
         // @param \replayCount Number of times to replay, 0=never, -1=always, >0=number of times
         // @return Return code
-        public SILVER_ERROR SetReplay(int replayCount)
+        public SILVER_ERROR SetLoopPlay(int loop)
         {
             if (m_Instance == IntPtr.Zero) return SILVER_ERROR.SILVER_NOT_EXIST;
-            return silverSetReplay(m_Instance,replayCount);
+            return silverSetLoopPlay(m_Instance, loop);
         }
-       
+
+
+        //
+        // @fn SILVER_ERROR silverReplay(SilverPlayer* pPlayer); 
+        // @brief Call this function after play end will again.
+        // @param \pPlayer Pointer to player object
+        // @return Return code
+        public SILVER_ERROR SilverReplay()
+        {
+            if (m_Instance == IntPtr.Zero) return SILVER_ERROR.SILVER_NOT_EXIST;
+            return silverReplay(m_Instance);
+        }
+
+        //
+        // @fn SILVER_ERROR silverIsReadyToRender(SilverPlayer* pPlayer, int32_t* ready);
+        // @brief Silver player is ready to render.
+        // @param \pPlayer Pointer to player object
+        // @param \ready if or not ready.
+        // @return Return code
+        public SILVER_ERROR IsReadyToRender(out Int32 ready)
+        {
+            ready = 0;
+            if (m_Instance == IntPtr.Zero) return SILVER_ERROR.SILVER_NOT_EXIST;
+            return silverIsReadyToRender(m_Instance, out ready);
+        }
+
+
         //
         //-------------------------------------------------------------------------
         // This is a temporary only helper function; to allow external squish mesh

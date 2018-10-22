@@ -12,6 +12,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using VRVIU.BitVRPlayer.BitData;
+using Assets.VRVIUBitVR.Scripts.Log;
 #if !UNITY_WEBPLAYER && !UNITY_WEBGL && !UNITY_WP8 && !UNITY_WP8_1
 using FFmpeg.AutoGen;
 using System.Threading;
@@ -52,6 +53,7 @@ public class BitPlayerTexture : MonoBehaviour
         private int m_iWidth;
         private int m_iHeight;
         private float m_fSpeed = 1.0f;
+        private long m_lNetWorkSpeed = 0;
 
         public bool m_bFullScreen = false;//Please use only in FullScreen prefab.
         public bool m_bSupportRockchip = true; //Using a device support Rochchip or Low-end devices
@@ -147,9 +149,8 @@ public class BitPlayerTexture : MonoBehaviour
         {
 #if UNITY_EDITOR && !UNITY_ANDROID
             String currentPath = Environment.GetEnvironmentVariable("PATH", EnvironmentVariableTarget.Process);
-            Debug.Log("currentPath:"+currentPath);
             String dllPath = Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Assets" + Path.DirectorySeparatorChar + "Plugins";
-            Debug.Log("DLL path:" + dllPath);
+            VLog.log(VLog.LEVEL_INFO,"DLL path:" + dllPath);
             if (currentPath.Contains(dllPath) == false)
             {
                 Environment.SetEnvironmentVariable("PATH", currentPath + Path.PathSeparator + dllPath, EnvironmentVariableTarget.Process);
@@ -485,7 +486,7 @@ public class BitPlayerTexture : MonoBehaviour
                     string seiInfo = Call_GetSeiInfo();
                     if (seiInfo != null)
                     {
-                        Debug.Log("GetSeiInfo " + seiInfo);
+                        VLog.log(VLog.LEVEL_DEBUG, "GetSeiInfo " + seiInfo);
                     }
                     if (OnReady != null)
                         OnReady();
@@ -509,11 +510,6 @@ public class BitPlayerTexture : MonoBehaviour
                     if (m_bLoop == true)
                     {
                         Call_Play(0);
-                    }
-                }
-                else if (m_CurrentState == MEDIAPLAYER_STATE.FIRSTFRAME) {
-                    if (OnVideoFirstFrameReady != null) {
-                        OnVideoFirstFrameReady();
                     }
                 }
                 else if (m_CurrentState == MEDIAPLAYER_STATE.ERROR)
@@ -580,7 +576,7 @@ public class BitPlayerTexture : MonoBehaviour
 
         public void ResizeTexture()
         {
-            Debug.Log("ResizeTexture " + m_iWidth + " " + m_iHeight);
+            VLog.log(VLog.LEVEL_DEBUG, "ResizeTexture " + m_iWidth + " " + m_iHeight);
 
             if (m_iWidth == 0 || m_iHeight == 0)
                 return;
@@ -860,7 +856,7 @@ public class BitPlayerTexture : MonoBehaviour
             }
 
 
-            Debug.LogError(strError);
+            VLog.log(VLog.LEVEL_ERROR, strError);
 
             if (OnVideoError != null)
             {
@@ -1073,6 +1069,21 @@ public class BitPlayerTexture : MonoBehaviour
                 return 0;
         }
 
+        public long GetNetWorkSpeed()
+        {
+            
+             return Call_GetNetWorkSpeed();
+           
+        }
+
+        public int GetError() {
+            return Call_GetError();
+        }
+
+        public int GetErrorExtra() {
+            return Call_GetErrorExtra();
+        }
+
         public float GetSeekBarValue()
         {
             if (m_CurrentState == MEDIAPLAYER_STATE.PLAYING || m_CurrentState == MEDIAPLAYER_STATE.PAUSED || m_CurrentState == MEDIAPLAYER_STATE.END || m_CurrentState == MEDIAPLAYER_STATE.READY || m_CurrentState == MEDIAPLAYER_STATE.STOPPED)
@@ -1111,6 +1122,20 @@ public class BitPlayerTexture : MonoBehaviour
         {
             return Call_GetVideoHeight();
         }
+
+        public bool IsUpdateFrame()
+        {
+            bool bUpdate = false;
+#if !UNITY_EDITOR && !UNITY_STANDALONE && !UNITY_WEBGL
+#if UNITY_ANDROID
+            bUpdate = Call_IsUpdateFrame();
+#endif
+#else
+            bUpdate = (m_CurrentState == MEDIAPLAYER_STATE.PLAYING);
+#endif
+            return bUpdate;
+        }
+
 
         public void UnLoad()
         {
@@ -1397,6 +1422,11 @@ public class BitPlayerTexture : MonoBehaviour
 	{
 	return GetJavaObject().Call<int>("GetDuration");
 	}
+
+    private long Call_GetNetWorkSpeed()
+    {
+    return GetJavaObject().Call<long>("GetNetWorkSpeed"); 
+    }
 
 	private int Call_GetCurrentSeekPercent()
 	{
@@ -2062,7 +2092,7 @@ public class BitPlayerTexture : MonoBehaviour
             if (strFileName.Contains("://") == false)
             {
                 strFileName = Application.streamingAssetsPath + "/" + strFileName;
-                Debug.Log(strFileName);
+                VLog.log(VLog.LEVEL_DEBUG, strFileName);
             }
             else if (strFileName.Contains("file://") == true)
             {
@@ -2075,7 +2105,7 @@ public class BitPlayerTexture : MonoBehaviour
                 {
                     pFormatContext = null;
                     m_CurrentState = MEDIAPLAYER_STATE.ERROR;
-                    Debug.Log("Could not open file");
+                    VLog.log(VLog.LEVEL_ERROR, "Could not open file");
                     throw new ApplicationException(@"Could not open file");
                 }
                 //ffmpeg.av_dict_free(&opts);
@@ -2083,7 +2113,7 @@ public class BitPlayerTexture : MonoBehaviour
                 if (ffmpeg.avformat_find_stream_info(pFormatContext, null) != 0)
                 {
                     m_CurrentState = MEDIAPLAYER_STATE.ERROR;
-                    Debug.Log("Could not find stream info");
+                    VLog.log(VLog.LEVEL_ERROR, "Could not find stream info");
                     throw new ApplicationException(@"Could not find stream info");
                 }
 
@@ -2132,14 +2162,14 @@ public class BitPlayerTexture : MonoBehaviour
             if (pStream == null)
             {
                 m_CurrentState = MEDIAPLAYER_STATE.ERROR;
-                Debug.Log("Could not found video stream");
+                VLog.log(VLog.LEVEL_ERROR, "Could not found video stream");
                 throw new ApplicationException(@"Could not found video stream");
             }
 
             if (pStreamAudio == null)
             {
                 //m_CurrentState = MEDIAPLAYER_STATE.ERROR;
-                Debug.Log("Could not found Audio stream" + bFindAudio);
+                VLog.log(VLog.LEVEL_ERROR, "Could not found Audio stream" + bFindAudio);
                 //throw new ApplicationException(@"Could not found audio stream");
             }
 
@@ -2163,7 +2193,7 @@ public class BitPlayerTexture : MonoBehaviour
             if (pConvertContext == null)
             {
                 m_CurrentState = MEDIAPLAYER_STATE.ERROR;
-                Debug.Log("Could not initialize the conversion context");
+                VLog.log(VLog.LEVEL_ERROR, "Could not initialize the conversion context");
                 throw new ApplicationException(@"Could not initialize the conversion context");
             }
 
@@ -2178,7 +2208,7 @@ public class BitPlayerTexture : MonoBehaviour
             if (pCodec == null)
             {
                 m_CurrentState = MEDIAPLAYER_STATE.ERROR;
-                Debug.Log("Unsupported codec");
+                VLog.log(VLog.LEVEL_ERROR, "Unsupported codec");
                 throw new ApplicationException(@"Unsupported codec");
             }
             
@@ -2193,7 +2223,7 @@ public class BitPlayerTexture : MonoBehaviour
             if (ffmpeg.avcodec_open2(pCodecContext, pCodec, null) < 0)
             {
                 m_CurrentState = MEDIAPLAYER_STATE.ERROR;
-                Debug.Log("Could not open codec");
+                VLog.log(VLog.LEVEL_ERROR, "Could not open codec");
                 throw new ApplicationException(@"Could not open codec");
             }
             
@@ -2205,7 +2235,7 @@ public class BitPlayerTexture : MonoBehaviour
                 if (pAudioCodec == null)
                 {
                     m_CurrentState = MEDIAPLAYER_STATE.ERROR;
-                    Debug.Log("Unsupported codec");
+                    VLog.log(VLog.LEVEL_ERROR, "Unsupported codec");
                     throw new ApplicationException(@"Unsupported codec");
                 }
 
@@ -2214,7 +2244,7 @@ public class BitPlayerTexture : MonoBehaviour
                 if (ffmpeg.avcodec_open2(pAudioCodecContext, pAudioCodec, null) < 0)
                 {
                     m_CurrentState = MEDIAPLAYER_STATE.ERROR;
-                    Debug.Log("Could not open codec");
+                    VLog.log(VLog.LEVEL_ERROR, "Could not open codec");
                     throw new ApplicationException(@"Could not open codec");
                 }
             }
@@ -2306,7 +2336,7 @@ public class BitPlayerTexture : MonoBehaviour
 
         private static void DebugMethod(string message)
         {
-            Debug.Log("EasyMovieTexture: " + message);
+            VLog.log(VLog.LEVEL_DEBUG, "EasyMovieTexture: " + message);
         }
         
         private void ThreadUpdate()
@@ -2341,7 +2371,7 @@ public class BitPlayerTexture : MonoBehaviour
                         var size = ffmpeg.avcodec_decode_video2(pCodecContext, pDecodedFrame, &gotPicture, pPacket);
                         if (size < 0)
                         {
-                            Debug.Log("Error while decoding frame");
+                            VLog.log(VLog.LEVEL_ERROR, "Error while decoding frame");
                             return;
 
                         }
@@ -2485,7 +2515,7 @@ public class BitPlayerTexture : MonoBehaviour
                         }
                         else
                         {
-                            Debug.Log("Could not read frame");
+                            VLog.log(VLog.LEVEL_ERROR, "Could not read frame");
                         }
                     }
 
@@ -2527,7 +2557,7 @@ public class BitPlayerTexture : MonoBehaviour
                                             
                                             if ((error = ffmpeg.swr_init(pAudioCvtContext)) < 0)
                                             {
-                                                Debug.Log("error " + error);
+                                                VLog.log(VLog.LEVEL_ERROR, "error " + error);
                                             }
                                             ffmpeg.swr_convert(pAudioCvtContext, &outData, iDataSize2, pDecodedAudioFrame->extended_data, pDecodedAudioFrame->nb_samples);
                                             sbyte* soundFrameAddress = outData;
@@ -3043,10 +3073,10 @@ public class BitPlayerTexture : MonoBehaviour
 
             long seek_target = (long)iSeek * 1000;
 
-            Debug.Log(seek_target);
+            VLog.log(VLog.LEVEL_DEBUG, seek_target);
             seek_target = ffmpeg.av_rescale_q(seek_target, ffmpeg.av_get_time_base_q(), pStream->time_base);
 
-            Debug.Log(seek_target);
+            VLog.log(VLog.LEVEL_DEBUG, seek_target);
 
             if (ffmpeg.av_seek_frame(pFormatContext, iStreamIndex,
                 seek_target, ffmpeg.AVSEEK_FLAG_BACKWARD) < 0)
@@ -3206,6 +3236,11 @@ public class BitPlayerTexture : MonoBehaviour
             return 0;
         }
 
+        private long Call_GetNetWorkSpeed()
+        {
+            return m_lNetWorkSpeed;
+        }
+
         private int Call_GetCurrentSeekPercent()
         {
             return -1;
@@ -3234,7 +3269,7 @@ public class BitPlayerTexture : MonoBehaviour
         {
             strURL = strURL.Trim();
 
-            Debug.Log("DownloadStreamingVideo : " + strURL);
+            VLog.log(VLog.LEVEL_DEBUG, "DownloadStreamingVideo : " + strURL);
             
             WWW www = new WWW(strURL);
 
@@ -3253,7 +3288,7 @@ public class BitPlayerTexture : MonoBehaviour
             }
             else
             {
-                Debug.Log(www.error);
+                VLog.log(VLog.LEVEL_ERROR, www.error);
             }
 
             www.Dispose();
@@ -3290,7 +3325,7 @@ public class BitPlayerTexture : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log(www.error);
+                    VLog.log(VLog.LEVEL_DEBUG, www.error);
                 }
 
                 www.Dispose();
@@ -3307,21 +3342,21 @@ public class BitPlayerTexture : MonoBehaviour
 
             if (System.IO.File.Exists(write_path) == false)
             {
-                Debug.Log("CopyStreamingAssetVideoAndLoad : " + strURL);
+                VLog.log(VLog.LEVEL_DEBUG, "CopyStreamingAssetVideoAndLoad : " + strURL);
                 WWW www = new WWW(Application.streamingAssetsPath + "/" + strURL);
 
                 yield return www;
 
                 if (string.IsNullOrEmpty(www.error))
                 {
-                    Debug.Log(write_path);
+                    VLog.log(VLog.LEVEL_DEBUG, write_path);
                     System.IO.File.WriteAllBytes(write_path, www.bytes);
 
                     setUrl("file://" + write_path);
                 }
                 else
                 {
-                    Debug.Log(www.error);
+                    VLog.log(VLog.LEVEL_ERROR, www.error);
                 }
 
                 www.Dispose();

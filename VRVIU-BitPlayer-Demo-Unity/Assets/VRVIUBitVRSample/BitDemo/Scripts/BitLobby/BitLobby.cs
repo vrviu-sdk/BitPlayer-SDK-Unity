@@ -11,6 +11,7 @@ using UnityEngine.XR;
 using UnityEngine.UI;
 using VRVIU.BitVRPlayer.BitData;
 using VRVIU.BitVRPlayer.BitVRPlayer.BitData;
+using VRVIU.BitVRPlayer.BitVideo;
 
 public class BitLobby : MonoBehaviour {
     #region Inspector Settings
@@ -31,7 +32,7 @@ public class BitLobby : MonoBehaviour {
     private bool isTriggerOnNew = false; 
     private RaycastHit prevHit;
     public static Account account = new Account();
-    public static VideoInfo videoData = new VideoInfo();
+    public static VideoInfo videoData;
     private static int backTimes = 0;
     // Use this for initialization
     void Start () {
@@ -157,21 +158,56 @@ public class BitLobby : MonoBehaviour {
         account.appId = "vrviu_altsdk";
         account.bizId = "altsdk_alpha";
         account.accessKey = "a2fe8f5e4767e6c3dca8beb9b410f17a";
-        account.accessKeyId = "dcb0af5f194f410796452a1644132f03";
-
-        if (tag.CompareTag("video 1"))
+        account.accessKeyId = "dcb0af5f194f410796452a1644132f03"; 
+        
+        
+        if (tag.CompareTag("video 1"))// online video
         {
             VideoInfo vi = new VideoInfo();
-            /* 视频文件路径：支持本地地址和网络url */
-            vi.url = "/sdcard/Movies/viuvideos/Scenery_2d_0_122.vr1";
+            vi.url = "https://rs-bs941.vrviu.com/viukmyc72/viukmyc72.10003a00e05o.0_0.mp4";
+            vi.projection = (int)VideoPorjection.OPT_FISHEYE;
+            vi.stereo = (int)VideoSteroType.OPT_MONO;
+            vi.hfov = (int)VideoHfov.DEGREE_180;
             videoData = vi;
             SceneManager.LoadScene("BitVideo");
         }
-        else if (tag.CompareTag("video 2"))
+        else if (tag.CompareTag("video 2"))// local vr1 video
         {
             VideoInfo vi1 = new VideoInfo();
-            /* 视频文件路径：支持本地地址和网络url */
-            vi1.url = "/sdcard/Movies/viuvideos/waterfall8k_4k.mp4";
+            vi1.url = "/sdcard/Movies/viuvideos/Thegreatwall.vr1";
+            videoData = vi1;
+            SceneManager.LoadScene("BitVideo");
+        }
+        else if (tag.CompareTag("video 3"))// vid video
+        {
+            VideoInfo vi1 = new VideoInfo();
+            vi1.vid = "viur7yzq1";
+            videoData = vi1;
+            SceneManager.LoadScene("BitVideo");
+        }
+        else if (tag.CompareTag("video 4"))// local mp4
+        {
+            VideoInfo vi1 = new VideoInfo();
+            vi1.url = "http://9870.liveplay.myqcloud.com/live/9870_8f4a1773ba.m3u8";
+            vi1.projection = 1;
+            vi1.stereo = 2;
+            vi1.hfov = 360;
+            videoData = vi1;
+            SceneManager.LoadScene("BitVideo");
+        }
+        else if (tag.CompareTag("video 5"))
+        {
+            VideoInfo vi1 = new VideoInfo();
+            //播放本地威尔云转码的vr1 8k视频（需要登录官网申请转码）
+            vi1.url = "/sdcard/Movies/viuvideos/FE8K.vr1";
+            videoData = vi1;
+            SceneManager.LoadScene("BitVideo");
+        }
+        else if (tag.CompareTag("video 6"))
+        {
+            VideoInfo vi1 = new VideoInfo();
+            //播放本地威尔云转码的vr1 8k视频（需要登录官网申请转码）
+            vi1.url = "/sdcard/Movies/viuvideos/FE3K.vr1";
             videoData = vi1;
             SceneManager.LoadScene("BitVideo");
         }

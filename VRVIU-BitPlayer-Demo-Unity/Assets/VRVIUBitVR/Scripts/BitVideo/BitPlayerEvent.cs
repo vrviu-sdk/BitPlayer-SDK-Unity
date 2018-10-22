@@ -4,6 +4,7 @@
 // Copyright © 2016-2018 VRVIU Technologies Limited. 
 //-----------------------------------------------------
 
+using Assets.VRVIUBitVR.Scripts.Log;
 using UnityEngine;
 
 namespace VRVIU.BitVRPlayer.BitVideo
@@ -34,7 +35,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
         /// </summary>
         void OnReady()
         {
-            Debug.Log("OnReady");
+            VLog.log(VLog.LEVEL_INFO, "OnReady");
         }
 
         /// <summary>
@@ -42,12 +43,12 @@ namespace VRVIU.BitVRPlayer.BitVideo
         /// </summary>
         void OnFirstFrameReady()
         {
-            Debug.Log("OnFirstFrameReady");
+            VLog.log(VLog.LEVEL_INFO, "OnFirstFrameReady");
         }
 
         void OnEnd()
         {
-            Debug.Log("OnEnd");
+            VLog.log(VLog.LEVEL_INFO, "OnEnd");
         }
 
         /// <summary>
@@ -55,7 +56,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
         /// </summary>
         void OnResize()
         {
-            Debug.Log("OnResize");
+            VLog.log(VLog.LEVEL_INFO, "OnResize");
         }
 
         /// <summary>
@@ -63,7 +64,7 @@ namespace VRVIU.BitVRPlayer.BitVideo
         /// </summary>
         void OnError(int errorCode, int errorCodeExtra)
         {
-            Debug.Log("OnError");
+            VLog.log(VLog.LEVEL_INFO, "OnError");
         }
     }
 }
