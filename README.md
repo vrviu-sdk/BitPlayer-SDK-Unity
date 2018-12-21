@@ -3,7 +3,7 @@
 [![](https://img.shields.io/badge/Powered%20by-vrviu.com-brightgreen.svg)](https://vrviu.com)
 
 ## 版本历史
-
+ 20181221 V2.9 增加错误回调接口；增加渲染模式切换接口； 优化了左右眼摄像机挂载方式；修复了一些bug；
  20181108 V2.8 优化.vr1文件播放性能；  
  20180930 V2.7 支持vr1文件名特殊字符播放；优化seek精度；修复一些bug；   
  20180921 V2.6 支持最新的8K编码优化算法。修复bug，包括循环播放失败，本地播放普通4K视频偶现黑屏等；   
@@ -97,6 +97,13 @@ Unity2017.2.2
 * 同时按下Alt键和鼠标左键，可以选择需要播放的视频类型
 * 等待凝视点变红后会跳转到播放页面
 
+### 第三方SDK接入威尔BitSDK时请注意
+* 若第三方SDK已存在LeftEye/RightEye Camera，请禁用VideoManager->LeftEye/RightEye Camera对象；
+* 并在VideoManager对应的Inspector面板，设置Video Formater脚本中LeftEye/RightEye Camera对象；
+  如若未设置以上左右眼Camera对象，请确保第三方SDK中左右眼Camera命名为“LeftEye”和“RightEye”；
+  两种摄像机设置方式任选其一，如果都不设置，会造成无法渲染的问题。
+* 另请注意第三方SDK的LeftEye/RightEye Camera的Clipping Planes属性中Far值，默认值为5000，太小可能无法看到渲染画面。
+
 ### 7. 接口调用
 
 ##### 7.1 初始化
@@ -186,6 +193,27 @@ public int GetPlayPosition()；
 ```c#
 public long GetNetWorkSpeed()； 
 ```
+
+##### 7.16 错误回调  
+```c#
+public void OnError(int errorCode, int errorCodeExtra)； 
+```
+/*
+ *  eg: 播放初始化时设置异常回调接口：mPlayer.OnVideoError += OnError;
+ * errorCode: 错误码，用于异常分析和处理
+ * errorCodeExtra: 拓展错误码
+*/
+
+##### 7.17 切换渲染模式  
+```c#
+public void UpdateRenderMode(VideoPorjection projection, VideoSteroType steroType, VideoHfov hfov)； 
+```
+/**
+ * projection:  投影方式（eg: FISHEYE）
+ * stereo:	立体格式（eg: 2D/3D)
+ * hfov: 	水平视角（eg:180°/360°）  
+ **/
+
 
 ### 8. 检查混淆
 ```proguard
